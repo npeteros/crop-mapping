@@ -18,6 +18,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->enum('role', ['bmao', 'leader', 'farmer'])->default('farmer');
+            $table->date('birthdate')->nullable();
+            $table->foreignId('barangay_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
 

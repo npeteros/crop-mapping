@@ -2,28 +2,26 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function Dashboard({ statistics, barangays }) {
-    const [selectedInfo, setSelectedInfo] = useState();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+export default function Profiles({ farmers }) {
     const [search, setSearch] = useState("");
     const [pagination, setPagination] = useState({
         pageIndex: 0,
-        pageSize: 5,
+        pageSize: 10,
     });
     const [sorting, setSorting] = useState({
-        column: "name",
+        column: "id",
         direction: "asc",
     });
 
     const startIndex = pagination.pageIndex * pagination.pageSize;
 
-    const [shownBarangays, setShownBarangays] = useState(
-        barangays
+    const [shownFarmers, setShownFarmers] = useState(
+        farmers
             .sort((a, b) => a.name.localeCompare(b.name))
             .slice(startIndex, startIndex + pagination.pageSize)
     );
 
-    const totalPages = Math.ceil(shownBarangays.length / pagination.pageSize);
+    const totalPages = Math.ceil(shownFarmers.length / pagination.pageSize);
 
     const pageNumbers = [];
     for (let i = 0; i < totalPages; i++) {
@@ -48,141 +46,66 @@ export default function Dashboard({ statistics, barangays }) {
         setSorting({ field, direction });
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelectedInfo(null);
-    };
+    function formatDateToMMDDYYYY(date) {
+        const d = new Date(date);
+        const month = (d.getMonth() + 1).toString().padStart(2, "0");
+        const day = d.getDate().toString().padStart(2, "0");
+        const year = d.getFullYear();
+
+        return `${month}-${day}-${year}`;
+    }
 
     useEffect(() => {
-        const nextIndex = pagination.pageIndex * pagination.pageSize;
-        setShownBarangays(
-            barangays
+        setShownFarmers(
+            farmers
                 .filter(
-                    (barangay) =>
-                        barangay.name
+                    (farmer) =>
+                        farmer.id == search ||
+                        farmer.name
                             .toLowerCase()
                             .includes(search.toLowerCase()) ||
-                        barangay.users_count == search
+                        farmer.birthdate
+                            .toLowerCase()
+                            .includes(search.toLowerCase()) ||
+                        farmer.barangay.name
+                            .toLowerCase()
+                            .includes(search.toLowerCase()) ||
+                        farmer.crops
+                            .map((crop) => crop.name.toLowerCase())
+                            .includes(search.toLowerCase())
                 )
                 .sort((a, b) => {
-                    let compareA, compareB;
-
-                    if (sorting.field === "name") {
-                        compareA = a.name.toLowerCase();
-                        compareB = b.name.toLowerCase();
-                        return sorting.direction === "asc"
-                            ? compareA.localeCompare(compareB)
-                            : compareB.localeCompare(compareA);
-                    } else if (sorting.field === "farmer_count") {
-                        compareA = a.users_count;
-                        compareB = b.users_count;
-                        return sorting.direction === "asc"
-                            ? compareA - compareB
-                            : compareB - compareA;
+                    switch (sorting.field) {
+                        case "id":
+                            return sorting.direction === "asc"
+                                ? a.id - b.id
+                                : b.id - a.id;
+                        case "name":
+                            return sorting.direction === "asc"
+                                ? a.name.localeCompare(b.name)
+                                : b.name.localeCompare(a.name);
+                        case "birthdate":
+                            return sorting.direction === "asc"
+                                ? a.birthdate.localeCompare(b.birthdate)
+                                : b.birthdate.localeCompare(a.birthdate);
+                        case "barangay":
+                            return sorting.direction === "asc"
+                                ? a.barangay.name.localeCompare(b.barangay.name)
+                                : b.barangay.name.localeCompare(
+                                      a.barangay.name
+                                  );
                     }
 
                     return 0;
                 })
         );
-    }, [pagination.pageIndex, barangays, sorting, search]);
+    }, [pagination.pageIndex, farmers, sorting, search]);
 
     return (
         <AuthenticatedLayout>
             <Head title="Dashboard" />
 
             <div className="w-screen sm:px-6 lg:px-8 py-12 gap-8 flex flex-col">
-                {isModalOpen && (
-                    <div
-                        className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-                        onClick={closeModal}
-                    >
-                        <div
-                            className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <h2 className="text-xl font-bold mb-4">
-                                {selectedInfo.name}
-                            </h2>
-                            <div className="mb-4">
-                                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                    <thead className="text-xs uppercase">
-                                        <tr>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                <div className="flex items-center">
-                                                    ID
-                                                </div>
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                <div className="flex items-center">
-                                                    Name
-                                                </div>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {statistics.total_farmers
-                                            .filter(
-                                                (farmer) =>
-                                                    farmer.barangay_id ==
-                                                    selectedInfo.id
-                                            )
-                                            .slice(0, 10)
-                                            .map((farmer) => (
-                                                <tr
-                                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                                    key={farmer.id}
-                                                >
-                                                    <td
-                                                        scope="row"
-                                                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                                    >
-                                                        {farmer.id}
-                                                    </td>
-                                                    <td
-                                                        scope="row"
-                                                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                                    >
-                                                        {farmer.name}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                )}
-                <div className="grid grid-cols-3 gap-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div className="p-6 flex flex-col items-center text-gray-900 dark:text-gray-100">
-                            <span className="text-xl">Total Barangays</span>
-                            <span className="font-bold text-3xl">
-                                {statistics.total_barangays}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div className="p-6 flex flex-col items-center text-gray-900 dark:text-gray-100">
-                            <span className="text-xl">Total Farmers</span>
-                            <span className="font-bold text-3xl">
-                                {statistics.total_farmers.length}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div className="p-6 flex flex-col items-center text-gray-900 dark:text-gray-100">
-                            <span className="text-xl">Total Crops</span>
-                            <span className="font-bold text-3xl">50</span>
-                        </div>
-                    </div>
-                </div>
-
                 <input
                     type="search"
                     value={search}
@@ -197,7 +120,25 @@ export default function Dashboard({ statistics, barangays }) {
                             <tr>
                                 <th scope="col" className="px-6 py-3">
                                     <div className="flex items-center">
-                                        Barangay
+                                        ID
+                                        <button
+                                            onClick={() => handleSort("id")}
+                                        >
+                                            <svg
+                                                className="w-3 h-3 ms-1.5"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    <div className="flex items-center">
+                                        Name
                                         <button
                                             onClick={() => handleSort("name")}
                                         >
@@ -215,10 +156,10 @@ export default function Dashboard({ statistics, barangays }) {
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     <div className="flex items-center">
-                                        Farmer Count
+                                        Birthdate
                                         <button
                                             onClick={() =>
-                                                handleSort("farmer_count")
+                                                handleSort("birthdate")
                                             }
                                         >
                                             <svg
@@ -233,31 +174,87 @@ export default function Dashboard({ statistics, barangays }) {
                                         </button>
                                     </div>
                                 </th>
+                                <th scope="col" className="px-6 py-3">
+                                    <div className="flex items-center">
+                                        Barangay
+                                        <button
+                                            onClick={() =>
+                                                handleSort("barangay")
+                                            }
+                                        >
+                                            <svg
+                                                className="w-3 h-3 ms-1.5"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    <div className="flex items-center">
+                                        Types of Crops
+                                    </div>
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    <div className="flex items-center">
+                                        Action
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {shownBarangays
+                            {shownFarmers
                                 .slice(
                                     startIndex,
                                     startIndex + pagination.pageSize
                                 )
-                                .map((barangay) => (
+                                .map((farmer) => (
                                     <tr
                                         className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                        key={barangay.id}
-                                        onClick={() => {
-                                            setSelectedInfo(barangay);
-                                            setIsModalOpen(true);
-                                        }}
+                                        key={farmer.id}
                                     >
+                                        <td className="px-6 py-4">
+                                            {farmer.id}
+                                        </td>
                                         <th
                                             scope="row"
                                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                         >
-                                            {barangay.name}
+                                            {farmer.name}
                                         </th>
                                         <td className="px-6 py-4">
-                                            {barangay.users_count}
+                                            {formatDateToMMDDYYYY(
+                                                farmer.birthdate
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {farmer.barangay.name}
+                                        </td>
+                                        <td className="py-4 grid grid-cols-4 gap-2 w-fit">
+                                            {farmer.crops.map((crop) => (
+                                                <span
+                                                    key={crop.id}
+                                                    className={`w-12 flex justify-center text-xs leading-5 font-semibold rounded-full text-black`}
+                                                    style={{
+                                                        backgroundColor:
+                                                            crop.color,
+                                                    }}
+                                                >
+                                                    {crop.name}
+                                                </span>
+                                            ))}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <a
+                                                href="#"
+                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                            >
+                                                Edit
+                                            </a>
                                         </td>
                                     </tr>
                                 ))}
@@ -277,7 +274,7 @@ export default function Dashboard({ statistics, barangays }) {
                             </span>{" "}
                             of{" "}
                             <span className="font-semibold text-gray-900 dark:text-white">
-                                {shownBarangays.length}
+                                {shownFarmers.length}
                             </span>
                         </span>
                         <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
