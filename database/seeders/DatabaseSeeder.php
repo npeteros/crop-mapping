@@ -40,8 +40,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $allCrops = Crop::all();
-
-        // Associate a random number of crops with each farmer
+        
         User::where('role', 'Farmer')->each(function ($farmer) use ($allCrops) {
             $farmer->crops()->attach(
                 $allCrops->random(rand(1, $allCrops->count()))->pluck('id')->toArray()
