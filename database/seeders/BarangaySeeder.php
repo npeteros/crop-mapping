@@ -3,21 +3,16 @@
 namespace Database\Seeders;
 
 use App\Models\Barangay;
-use App\Models\Crop;
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Hash;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class BarangaySeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         $barangays = [
             'Abucayan',
             'Aliwanay',
@@ -31,7 +26,7 @@ class DatabaseSeeder extends Seeder
             'Cambuhawe',
             'Cansomoroy',
             'Cantibas',
-            'Cantuod',
+            'Cantu-od',
             'Duangan',
             'Gaas',
             'Ginatilan',
@@ -39,37 +34,20 @@ class DatabaseSeeder extends Seeder
             'Lamesa',
             'Liki',
             'Luca',
-            'Matun-Og',
+            'Matun-og',
             'Nangka',
             'Pondol',
             'Prenza',
             'Singsing',
-            'Santa Cruz-Santo Niño',
+            'Sta Cruz - Sto. Nino',
             'Sunog',
             'Vito'
         ];
 
         foreach ($barangays as $barangay) {
-            Barangay::factory()->create([
+            Barangay::create([
                 'name' => $barangay
             ]);
         }
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => Hash::make('test'),
-            'barangay_id' => 1
-        ]);
-
-        // User::factory(50)->create();
-
-        // for ($i = 0; $i < 50; $i++) {
-        //     $user = User::factory()->create();
-
-        //     Crop::factory()->create([
-        //         'user_id' => $user->id
-        //     ]);
-        // }
     }
 }

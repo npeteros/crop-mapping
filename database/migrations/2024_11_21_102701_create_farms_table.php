@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('farmer_crops', function (Blueprint $table) {
+        Schema::create('farms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('crop_id')->constrained()->cascadeOnDelete();
+            $table->string('color');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('farmer_crops');
+        Schema::dropIfExists('farms');
     }
 };

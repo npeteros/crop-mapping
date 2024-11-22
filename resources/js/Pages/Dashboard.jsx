@@ -178,7 +178,7 @@ export default function Dashboard({ statistics, barangays }) {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                         <div className="p-6 flex flex-col items-center text-gray-900 dark:text-gray-100">
                             <span className="text-xl">Total Crops</span>
-                            <span className="font-bold text-3xl">50</span>
+                            <span className="font-bold text-3xl">{statistics.total_crops}</span>
                         </div>
                     </div>
                 </div>

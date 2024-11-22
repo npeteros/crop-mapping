@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Crop extends Model
+class Farm extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'name',
         'color'
     ];
 

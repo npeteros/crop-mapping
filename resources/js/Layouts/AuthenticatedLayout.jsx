@@ -30,14 +30,24 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
-                                <NavLink>Maps</NavLink>
+                                <NavLink
+                                    href={route("maps")}
+                                    active={route().current("maps")}
+                                >
+                                    Maps
+                                </NavLink>
                                 <NavLink
                                     href={route("profiles")}
                                     active={route().current("profiles")}
                                 >
                                     Profiles
                                 </NavLink>
-                                <NavLink>Crops</NavLink>
+                                <NavLink
+                                    // href={route("farms.index")}
+                                    // active={route().current("farms.index")}
+                                >
+                                    Crops
+                                </NavLink>
                                 <NavLink>Insurance</NavLink>
                                 <NavLink>Resources</NavLink>
                                 <NavLink>Accounts</NavLink>

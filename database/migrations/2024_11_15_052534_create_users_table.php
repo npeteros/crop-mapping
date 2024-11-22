@@ -20,7 +20,8 @@ return new class extends Migration
             $table->rememberToken();
             $table->enum('role', ['bmao', 'leader', 'farmer'])->default('farmer');
             $table->date('birthdate')->nullable();
-            $table->foreignId('barangay_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('barangay_id')->constrained()->cascadeOnDelete();
+            $table->string('address');
             $table->timestamps();
         });
 

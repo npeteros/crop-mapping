@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,6 +25,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'address',
+        'birthdate',
+        'barangay_id'
     ];
 
     /**
@@ -54,9 +58,8 @@ class User extends Authenticatable
         return $this->belongsTo(Barangay::class);
     }
 
-    public function crops(): BelongsToMany
+    public function crops(): HasMany
     {
-        return $this->belongsToMany(Crop::class, 'farmer_crops')
-            ->withTimestamps();
+        return $this->hasMany(Crop::class);
     }
 }
