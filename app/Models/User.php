@@ -22,12 +22,16 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'last_name',
+        'first_name',
+        'middle_name',
         'email',
         'password',
         'address',
+        'rsba',
         'birthdate',
-        'barangay_id'
+        'barangay_id',
+        'farm_id'
     ];
 
     /**
@@ -61,5 +65,10 @@ class User extends Authenticatable
     public function crops(): HasMany
     {
         return $this->hasMany(Crop::class);
+    }
+
+    public function farm(): HasOne
+    {
+        return $this->hasOne(Farm::class);
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,9 +32,25 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (auth()->user()->approved == 0) {
+            auth()->logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account is not approved. Please contact the administrator.',
+            ]);
+        }
+
+        if(auth()->user()->role == 'bmao') {
+            auth()->logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Invalid credentials',
+            ]);
+        }
+
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**

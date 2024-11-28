@@ -90,7 +90,7 @@ export default function Dashboard({ statistics, barangays }) {
         <AuthenticatedLayout>
             <Head title="Dashboard" />
 
-            <div className="w-screen sm:px-6 lg:px-8 py-12 gap-8 flex flex-col">
+            <div className="w-screen px-6 lg:px-8 py-12 gap-8 flex flex-col">
                 {isModalOpen && (
                     <div
                         className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
@@ -148,7 +148,10 @@ export default function Dashboard({ statistics, barangays }) {
                                                         scope="row"
                                                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                                     >
-                                                        {farmer.name}
+                                                        {farmer.last_name},{" "}
+                                                        {farmer.first_name}{" "}
+                                                        {farmer.middle_name ??
+                                                            undefined}
                                                     </td>
                                                 </tr>
                                             ))}
@@ -160,25 +163,33 @@ export default function Dashboard({ statistics, barangays }) {
                 )}
                 <div className="grid grid-cols-3 gap-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div className="p-6 flex flex-col items-center text-gray-900 dark:text-gray-100">
-                            <span className="text-xl">Total Barangays</span>
+                        <div className="p-6 flex flex-col items-center h-full justify-center text-gray-900 dark:text-gray-100">
+                            <span className="text-xl text-center">
+                                Total Barangays
+                            </span>
                             <span className="font-bold text-3xl">
                                 {statistics.total_barangays}
                             </span>
                         </div>
                     </div>
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div className="p-6 flex flex-col items-center text-gray-900 dark:text-gray-100">
-                            <span className="text-xl">Total Farmers</span>
+                        <div className="p-6 flex flex-col items-center h-full justify-center text-gray-900 dark:text-gray-100">
+                            <span className="text-xl text-center">
+                                Total Farmers
+                            </span>
                             <span className="font-bold text-3xl">
                                 {statistics.total_farmers.length}
                             </span>
                         </div>
                     </div>
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div className="p-6 flex flex-col items-center text-gray-900 dark:text-gray-100">
-                            <span className="text-xl">Total Crops</span>
-                            <span className="font-bold text-3xl">{statistics.total_crops}</span>
+                        <div className="p-6 flex flex-col items-center h-full justify-center text-gray-900 dark:text-gray-100">
+                            <span className="text-xl text-center">
+                                Total Crops
+                            </span>
+                            <span className="font-bold text-3xl">
+                                {statistics.total_crops}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -187,13 +198,13 @@ export default function Dashboard({ statistics, barangays }) {
                     type="search"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="rounded-full h-10 w-1/2 border-gray-400 ps-4"
+                    className="rounded-full h-10 w-full sm:w-1/2 border-gray-400 ps-4"
                     placeholder="Search..."
                 />
 
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-base uppercase bg-secondary-light dark:bg-gray-700 dark:text-gray-400">
+                        <thead className="text-xs text-base-color uppercase bg-secondary-light dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" className="px-6 py-3">
                                     <div className="flex items-center">

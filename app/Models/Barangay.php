@@ -18,4 +18,9 @@ class Barangay extends Model
     {
         return $this->hasMany(User::class);
     }
+    
+    public function precreatedUser(): HasMany
+    {
+        return $this->hasMany(PrecreatedUser::class);
+    }
 }

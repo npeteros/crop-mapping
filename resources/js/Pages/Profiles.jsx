@@ -104,9 +104,9 @@ export default function Profiles({ farmers }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Dashboard" />
+            <Head title="Profiles" />
 
-            <div className="w-screen sm:px-6 lg:px-8 py-12 gap-8 flex flex-col">
+            <div className="w-screen px-6 lg:px-8 py-12 gap-8 flex flex-col">
                 <input
                     type="search"
                     value={search}
@@ -116,17 +116,15 @@ export default function Profiles({ farmers }) {
                 />
                 <div className="flex flex-col gap-2">
                     <div className="w-full flex justify-end">
-                        <NavLink
-                            href={route("farms.index")}
-                        >
-                            <button className="border-2 border-primary-light text-primary-light hover:bg-primary-light hover:text-white px-6 py-1 rounded-lg">
+                        <NavLink href={route("farms.index")}>
+                            <button className="border-2 border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white px-12 py-2 rounded-lg">
                                 Add
                             </button>
                         </NavLink>
                     </div>
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <thead className="text-xs text-base uppercase bg-secondary-light dark:bg-gray-700 dark:text-gray-400">
+                            <thead className="text-xs text-base-color uppercase bg-secondary-light dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
@@ -247,18 +245,19 @@ export default function Profiles({ farmers }) {
                                                 {farmer.barangay.name}
                                             </td>
                                             <td className="py-4 grid grid-cols-4 gap-2 w-fit">
-                                                {farmer.crops && farmer.crops.map((crop) => (
-                                                    <span
-                                                        key={crop.id}
-                                                        className={`w-12 flex justify-center text-xs leading-5 font-semibold rounded-full text-black`}
-                                                        style={{
-                                                            backgroundColor:
-                                                                crop.color,
-                                                        }}
-                                                    >
-                                                        {crop.name}
-                                                    </span>
-                                                ))}
+                                                {farmer.crops &&
+                                                    farmer.crops.map((crop) => (
+                                                        <span
+                                                            key={crop.id}
+                                                            className={`w-12 flex justify-center text-xs leading-5 font-semibold rounded-full text-black`}
+                                                            style={{
+                                                                backgroundColor:
+                                                                    crop.color,
+                                                            }}
+                                                        >
+                                                            {crop.name}
+                                                        </span>
+                                                    ))}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <a

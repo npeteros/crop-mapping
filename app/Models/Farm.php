@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Farm extends Model
 {
@@ -17,9 +18,14 @@ class Farm extends Model
         'color'
     ];
 
-    public function user(): BelongsTo
+    public function user(): HasOne
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class);
+    }
+
+    public function precreatedUser(): HasOne
+    {
+        return $this->hasOne(PrecreatedUser::class);
     }
 
     public function zones(): HasMany

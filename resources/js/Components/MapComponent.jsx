@@ -47,11 +47,9 @@ export default function MapComponent({ barangays, controls = null }) {
     function onEachFeature(feature, layer) {
         layer.on("click", (e) => {
             if (feature.properties && feature.properties.NAME_3) {
-                console.log(feature.properties.NAME_3);
                 const clickedBarangay = barangays.find(
                     (barangay) => barangay.name === feature.properties.NAME_3
                 );
-                console.log(e.latlng);
                 if (clickedBarangay) {
                     const { lat, lng } = e.latlng;
                     setClickedArea({

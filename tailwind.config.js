@@ -21,7 +21,7 @@ export default {
                 "primary-dark": '#283618',
                 "secondary-light": '#DDA15E',
                 "secondary-dark": "#BC6C25",
-                "base": "#FEFAE0"
+                "base-color": "#FEFAE0"
             }
         },
     },

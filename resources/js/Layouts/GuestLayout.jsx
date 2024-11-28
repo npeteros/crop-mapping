@@ -1,18 +1,28 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link } from '@inertiajs/react';
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import { Link } from "@inertiajs/react";
 
-export default function GuestLayout({ children }) {
+export default function GuestLayout({ title='Log In', children }) {
     return (
-        <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0 dark:bg-gray-900">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                </Link>
+        <main className="w-full h-screen grid grid-cols-2">
+            <div className="w-full h-full flex items-center justify-center">
+                <div className="bg-neutral-100 flex flex-col gap-4 w-[32rem] p-8 rounded-2xl">
+                    <div className="w-full flex justify-between">
+                        <div className="flex flex-col gap-2">
+                            <span className="text-2xl font-bold">
+                                Balamban Municipal Agriculture Office
+                            </span>
+                            <span className="uppercase text-lg">
+                                {title}
+                            </span>
+                        </div>
+                        <ApplicationLogo className="size-24" />
+                    </div>
+                    {children}
+                </div>
             </div>
-
-            <div className="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg dark:bg-gray-800">
-                {children}
+            <div className="bg-base-color flex justify-center items-center">
+                <ApplicationLogo className="size-96" />
             </div>
-        </div>
+        </main>
     );
 }

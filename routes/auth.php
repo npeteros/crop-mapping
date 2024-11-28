@@ -9,7 +9,10 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -19,8 +22,29 @@ Route::middleware('guest')->group(function () {
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
-
+        
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+
+    Route::get('/admin', function () {
+        return Inertia::render('Auth/AdminLogin');
+    });
+
+    Route::post('/admin', function (LoginRequest $request) {
+
+        $request->authenticate();
+
+        if (auth()->user()->role == 'farmer') {
+            auth()->logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Invalid credentials',
+            ]);
+        }
+
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('dashboard', absolute: false));
+    })->name('admin');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
