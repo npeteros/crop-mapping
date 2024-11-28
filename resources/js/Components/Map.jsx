@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 
 export default function Map({ barangays, farms }) {
+    const user = usePage().props.auth.user;
+
     const [clickedArea, setClickedArea] = useState({
         areaName: "",
         coords: [],
@@ -28,7 +30,6 @@ export default function Map({ barangays, farms }) {
         coords: [],
     });
 
-    console.log(clickedFarm)
     function calculateCenter(coords) {
         let totalLat = 0;
         let totalLng = 0;
@@ -152,8 +153,19 @@ export default function Map({ barangays, farms }) {
                     </Popup>
                 )}
                 {farms &&
-                    farms.map((farm) => {
-                        return (
+                    (user.role === "farmer" ? (
+                        <Polygon
+                            key={farms.id}
+                            positions={farms.zones.map((zone) => [
+                                zone.latitude,
+                                zone.longitude,
+                            ])}
+                            pathOptions={{ color: farms.color }}
+                            fill={true}
+                            fillColor={farms.color}
+                        />
+                    ) : (
+                        farms.map((farm) => (
                             <Polygon
                                 key={farm.id}
                                 positions={farm.zones.map((zone) => [
@@ -164,8 +176,8 @@ export default function Map({ barangays, farms }) {
                                 fill={true}
                                 fillColor={farm.color}
                             />
-                        );
-                    })}
+                        ))
+                    ))}
                 <GeoJSON data={geoData} onEachFeature={onEachFeature} />
                 <MoveMapToCenter center={center.coords} />
                 <MapClickHandler />
@@ -206,7 +218,8 @@ export default function Map({ barangays, farms }) {
                                         <td className="px-6 py-4">
                                             {clickedFarm.farmer.last_name},{" "}
                                             {clickedFarm.farmer.first_name}{" "}
-                                            {clickedFarm.farmer.middle_name ?? undefined}
+                                            {clickedFarm.farmer.middle_name ??
+                                                undefined}
                                         </td>
                                     </tr>
                                     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">

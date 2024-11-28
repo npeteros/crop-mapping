@@ -4,7 +4,6 @@ import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function Profiles({ users }) {
-    console.log(users);
     const [search, setSearch] = useState("");
     const [pagination, setPagination] = useState({
         pageIndex: 0,

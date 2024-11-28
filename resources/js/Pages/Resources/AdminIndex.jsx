@@ -202,7 +202,7 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                             </li>
                         </ul>
 
-                        <NavLink href={route("farms.index")}>
+                        <NavLink>
                             <button className="border-2 border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white px-12 py-2 rounded-lg">
                                 Add
                             </button>

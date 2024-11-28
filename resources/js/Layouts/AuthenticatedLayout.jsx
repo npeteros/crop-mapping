@@ -42,12 +42,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Maps
                                 </NavLink>
-                                <NavLink
-                                    href={route("profiles")}
-                                    active={route().current("profiles")}
-                                >
-                                    Profiles
-                                </NavLink>
                                 <NavLink>Crops</NavLink>
                                 <NavLink
                                     href={route("insurance.index")}
@@ -151,9 +145,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 </span>
                                             </NavLink>
                                             <NavLink
-                                                href={route(
-                                                    "farmer-registrations"
-                                                )}
+                                                href={route("farmer-registrations")}
                                                 active={route().current(
                                                     "farmer-registrations"
                                                 )}
@@ -239,12 +231,6 @@ export default function AuthenticatedLayout({ header, children }) {
                             active={route().current("maps")}
                         >
                             Maps
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route("profiles")}
-                            active={route().current("profiles")}
-                        >
-                            Profiles
                         </ResponsiveNavLink>
                         <ResponsiveNavLink>Crops</ResponsiveNavLink>
                         <ResponsiveNavLink

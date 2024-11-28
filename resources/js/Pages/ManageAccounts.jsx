@@ -13,8 +13,6 @@ function DeletePrecreatedUser({ user }) {
         farmId: user.farm_id,
     });
 
-    console.log(errors);
-
     return (
         <Link
             href={route("precreated-users.destroy", data.id)}
@@ -27,7 +25,6 @@ function DeletePrecreatedUser({ user }) {
 }
 
 export default function Profiles({ precreated, users, barangays }) {
-    console.log(precreated);
     const { data, setData, post, processing, errors } = useForm({
         rsba: "",
         lastName: "",

@@ -23,8 +23,6 @@ export default function Insurance({ farmers }) {
             .slice(startIndex, startIndex + pagination.pageSize)
     );
 
-    console.log(shownFarmers)
-
     const totalPages = Math.ceil(shownFarmers.length / pagination.pageSize);
 
     const pageNumbers = [];
@@ -155,7 +153,7 @@ export default function Insurance({ farmers }) {
                             </li>
                         </ul>
 
-                        <NavLink href={route("farms.index")}>
+                        <NavLink>
                             <button className="border-2 border-secondary-light text-secondary-light hover:bg-secondary-light hover:text-white px-12 py-2 rounded-lg">
                                 Print
                             </button>

@@ -18,7 +18,6 @@ import { polygon } from "@turf/helpers";
 import area from "@turf/area";
 
 export default function Farms({ farm }) {
-    console.log(farm);
     const [center, setCenter] = useState({
         areaName: "",
         coords: [],

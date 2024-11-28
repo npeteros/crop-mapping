@@ -18,7 +18,6 @@ export default function Resources({ fertilizers, equipments, seeds }) {
         resource: "",
     });
 
-    console.log(data);
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState("");
     const [pagination, setPagination] = useState({
