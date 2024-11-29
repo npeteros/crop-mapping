@@ -8,18 +8,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-function DeletePrecreatedUser({ user }) {
-    return (
-        <Link
-            href={route("precreated-users.destroy", user.id)}
-            method="delete"
-            className="font-medium text-red-600 dark:text-red-500 hover:underline"
-        >
-            Delete
-        </Link>
-    );
-}
-
 export default function Profiles({ precreated, users, barangays }) {
     const { data, setData, post, processing, errors } = useForm({
         rsba: "",
@@ -546,9 +534,16 @@ export default function Profiles({ precreated, users, barangays }) {
                                                           Edit
                                                       </Link>{" "}
                                                       /{" "}
-                                                      <DeletePrecreatedUser
-                                                          user={farmer}
-                                                      />
+                                                      <Link
+                                                          href={route(
+                                                              "precreated-users.destroy",
+                                                              farmer.id
+                                                          )}
+                                                          method="delete"
+                                                          className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                                                      >
+                                                          Delete
+                                                      </Link>
                                                   </td>
                                               </tr>
                                           ))

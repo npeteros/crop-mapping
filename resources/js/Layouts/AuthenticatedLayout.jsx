@@ -31,7 +31,7 @@ export default function AuthenticatedLayout({ header, children }) {
             },
             {
                 name: "Manage Requests",
-                url: "requests",
+                url: "manage-requests",
             },
         ]
     };

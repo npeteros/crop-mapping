@@ -30,15 +30,24 @@ export default function Map({ barangays, farms }) {
         coords: [],
     });
 
-    const cropTypeNames = Array.from(
-        new Set(
-            user.role === "bmao"
-                ? farms.map((farm) =>
-                      farm.user.crops.map((crop) => crop.crop_type.name)
-                  )
-                : farms.user.crops.map((crop) => crop.crop_type.name)
-        )
-    );
+    function getCropTypeNamesForUser(user) {
+        if (!user || !user.crops) {
+            return ""; // Return an empty string if the user object or "crops" key is missing
+        }
+
+        return Array.from(
+            new Set(
+                user.role === "bmao"
+                    ? farms.flatMap(
+                          (farm) =>
+                              farm.user?.crops?.map(
+                                  (crop) => crop.crop_type.name
+                              ) || []
+                      )
+                    : user.crops.map((crop) => crop.crop_type.name)
+            )
+        ).join(", ");
+    }
 
     function calculateCenter(coords) {
         let totalLat = 0;
@@ -78,7 +87,7 @@ export default function Map({ barangays, farms }) {
             click: (e) => {
                 const { lat, lng } = e.latlng;
 
-                user.role === "bmao" &&
+                if (user.role === "bmao") {
                     farms.map((farm) => {
                         const polygon = L.polygon(
                             farm.zones.map((zone) => [
@@ -102,24 +111,28 @@ export default function Map({ barangays, farms }) {
                             });
                         }
                     });
-
-                const polygon = L.polygon(
-                    farms.zones.map((zone) => [zone.latitude, zone.longitude])
-                );
-
-                const isInside = polygon
-                    .getBounds()
-                    .contains(L.latLng(lat, lng));
-
-                if (isInside) {
-                    setClickedFarm({
-                        farmer: farms.user ?? farms.precreated_user,
-                        coords: [lat, lng],
-                        polygon: farms.zones.map((zone) => [
+                } else {
+                    const polygon = L.polygon(
+                        farms.zones.map((zone) => [
                             zone.latitude,
                             zone.longitude,
-                        ]),
-                    });
+                        ])
+                    );
+
+                    const isInside = polygon
+                        .getBounds()
+                        .contains(L.latLng(lat, lng));
+
+                    if (isInside) {
+                        setClickedFarm({
+                            farmer: farms.user ?? farms.precreated_user,
+                            coords: [lat, lng],
+                            polygon: farms.zones.map((zone) => [
+                                zone.latitude,
+                                zone.longitude,
+                            ]),
+                        });
+                    }
                 }
             },
         });
@@ -282,7 +295,9 @@ export default function Map({ barangays, farms }) {
                                             Crops
                                         </th>
                                         <td className="px-6 py-4">
-                                            {cropTypeNames.join(", ")}
+                                            {getCropTypeNamesForUser(
+                                                clickedFarm.farmer
+                                            )}
                                         </td>
                                     </tr>
                                     {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">

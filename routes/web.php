@@ -9,6 +9,7 @@ use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\PrecreatedUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\ResourceRequestController;
 use App\Http\Controllers\SeedController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Middleware\AdminAccess;
@@ -18,6 +19,7 @@ use App\Models\Equipment;
 use App\Models\Farm;
 use App\Models\Fertilizer;
 use App\Models\PrecreatedUser;
+use App\Models\ResourceRequest;
 use App\Models\Seed;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -110,6 +112,58 @@ Route::get('/manage-accounts', function () {
     ]);
 })->middleware(['auth', 'verified', AdminAccess::class])->name('manage-accounts');
 
+Route::get('/manage-requests', function () {
+    return Inertia::render('Resources/ManageRequests', [
+        'requests' => ResourceRequest::with(['fertilizer', 'equipment', 'seed', 'user'])
+            ->get()
+            ->map(function ($request) {
+                $requestName = null;
+
+                if ($request->category === 'fertilizer' && $request->fertilizer) {
+                    $requestName = $request->fertilizer->name;
+                } elseif ($request->category === 'equipment' && $request->equipment) {
+                    $requestName = $request->equipment->name;
+                } elseif ($request->category === 'seed' && $request->seed) {
+                    $requestName = $request->seed->name;
+                }
+
+                return [
+                    'id' => $request->id,
+                    'user_id' => $request->user_id,
+                    'farmer' => $request->user->last_name . ', ' . $request->user->first_name . ' ' . $request->user->middle_name,
+                    'name' => $requestName,
+                    'status' => $request->status,
+                    'date_approved' => $request->date_approved
+                ];
+            })
+    ]);
+})->middleware(['auth', 'verified', AdminAccess::class])->name('manage-requests');
+
+Route::get('my-requests', function () {
+    return Inertia::render('Resources/MyRequests', [
+        'requests' => ResourceRequest::with(['fertilizer', 'equipment', 'seed'])
+        ->where('user_id', auth()->user()->id)
+        ->get()
+        ->map(function ($request) {
+            $requestName = null;
+
+            if ($request->category === 'fertilizer' && $request->fertilizer) {
+                $requestName = $request->fertilizer->name;
+            } elseif ($request->category === 'equipment' && $request->equipment) {
+                $requestName = $request->equipment->name;
+            } elseif ($request->category === 'seed' && $request->seed) {
+                $requestName = $request->seed->name;
+            }
+
+            return [
+                'id' => $request->id,
+                'name' => $requestName,
+                'status' => ucfirst($request->status),
+            ];
+        })
+    ]);
+})->middleware(['auth', 'verified'])->name('my-requests');
+
 Route::get('/farmer-registrations', function () {
     return Inertia::render('FarmerRegistrations', [
         'users' => User::where(['role' => 'Farmer', 'approved' => '0'])->get()
@@ -150,21 +204,9 @@ Route::resource('seeds', SeedController::class)
     ->only(['update', 'destroy'])
     ->middleware(['auth', 'verified', AdminAccess::class]);
 
-// Route::get('/resources', function () {
-//     return Inertia::render('Resources', [
-//         'fertilizers' => Fertilizer::all(),
-//         'equipments' => Equipment::all(),
-//         'seeds' => Seed::all(),
-//     ]);
-// })->middleware(['auth', 'verified'])->name('resources');
-
-Route::get('/requests', function () {
-    return Inertia::render('Requests', [
-        'fertilizers' => Fertilizer::all(),
-        'equipments' => Equipment::all(),
-        'seeds' => Seed::all(),
-    ]);
-})->middleware(['auth', 'verified'])->name('requests');
+Route::resource('resource-requests', ResourceRequestController::class)
+    ->only(['index', 'store', 'update', 'destroy'])
+    ->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

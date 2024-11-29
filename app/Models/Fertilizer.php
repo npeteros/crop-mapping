@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Fertilizer extends Model
 {
@@ -14,4 +15,9 @@ class Fertilizer extends Model
         'type',
         'stock'
     ];
+
+    public function resourceRequests(): HasMany
+    {
+        return $this->hasMany(ResourceRequest::class);
+    }
 }

@@ -71,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Farm::class);
     }
+
+    public function resourceRequests(): HasMany
+    {
+        return $this->hasMany(ResourceRequest::class);
+    }
 }

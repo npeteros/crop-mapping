@@ -1,5 +1,6 @@
 import AddModal from "@/Components/AddModal";
 import FarmerNavbar from "@/Components/FarmerNavbar";
+import InputError from "@/Components/InputError";
 import Modal from "@/Components/Modal";
 import NavLink from "@/Components/NavLink";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -11,15 +12,11 @@ export default function Resources({ fertilizers, equipments, seeds }) {
     const user = usePage().props.auth.user;
 
     const { data, setData, post, processing, errors } = useForm({
-        farmerName: user.name,
-        address: user.address,
-        contact: "",
-        area: 0,
+        user_id: user.id,
         category: "fertilizer",
-        resource: "",
+        resource_id: "",
     });
 
-    const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState("");
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -176,6 +173,8 @@ export default function Resources({ fertilizers, equipments, seeds }) {
 
     const submit = (e) => {
         e.preventDefault();
+
+        post(route("resource-requests.store"));
     };
 
     return (
@@ -228,48 +227,12 @@ export default function Resources({ fertilizers, equipments, seeds }) {
                             </button>
                         </li>
                     </ul>
-
                     <AddModal
                         title="Request for Resources"
                         onSubmit={submit}
                         processing={processing}
+                        triggerText="Request"
                     >
-                        <div className="flex flex-col gap-1">
-                            <label htmlFor="name">Farmer Name: </label>
-                            <input
-                                type="text"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                value={data.farmerName}
-                                onChange={(e) =>
-                                    setData("farmerName", e.target.value)
-                                }
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <label htmlFor="name">Address: </label>
-                            <input
-                                type="text"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                value={data.address}
-                                onChange={(e) =>
-                                    setData("address", e.target.value)
-                                }
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <label htmlFor="name">Contact Number: </label>
-                            <input
-                                type="text"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                value={data.contact}
-                                onChange={(e) =>
-                                    setData("contact", e.target.value)
-                                }
-                                required
-                            />
-                        </div>
                         <div className="flex flex-col gap-1">
                             <label htmlFor="name">Resource Category: </label>
                             <select
@@ -283,36 +246,39 @@ export default function Resources({ fertilizers, equipments, seeds }) {
                                 <option value={"equipment"}>Equipment</option>
                                 <option value={"seed"}>Seed</option>
                             </select>
+                            <InputError message={errors.category} />
                         </div>
                         <div className="flex flex-col gap-1">
                             <label htmlFor="name">Resource Name: </label>
                             <select
-                                value={data.resource}
+                                value={data.resource_id}
                                 onChange={(e) =>
-                                    setData("resource", e.target.value)
+                                    setData("resource_id", e.target.value)
                                 }
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             >
+                                <option value={""} disabled>Select {data.category.charAt(0).toUpperCase() + data.category.slice(1)}</option>
                                 {data.category == "fertilizer"
                                     ? fertilizers.map((fertilizer) => (
-                                          <option value={fertilizer.id}>
+                                          <option key={fertilizer.id} value={fertilizer.id}>
                                               {fertilizer.name}
                                           </option>
                                       ))
                                     : data.category == "equipment"
                                     ? equipments.map((equipment) => (
-                                          <option value={equipment.id}>
+                                          <option key={equipment.id} value={equipment.id}>
                                               {equipment.name}
                                           </option>
                                       ))
                                     : data.category == "seed"
                                     ? seeds.map((seed) => (
-                                          <option value={seed.id}>
+                                          <option key={seed.id} value={seed.id}>
                                               {seed.name}
                                           </option>
                                       ))
                                     : null}
                             </select>
+                            <InputError message={errors.resource_id} />
                         </div>
                     </AddModal>
                 </div>
