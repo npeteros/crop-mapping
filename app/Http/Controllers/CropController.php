@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Barangay;
 use App\Models\Crop;
-use App\Models\User;
-use App\Models\Zone;
+use App\Models\CropType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Log; 
+use Log;
 
 class CropController extends Controller
 {
@@ -19,11 +17,12 @@ class CropController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Crops', [
-            'barangays' => Barangay::withCount('users')->get(),
-            'farmers' => User::with('barangay')->where('role', 'Farmer')->has('barangay')->get(),
-            'crops' => Crop::with(['zones', 'user'])->get(),
-        ]);
+        return auth()->user()->role === 'bmao' ? Inertia::render('Crops/AdminIndex', [
+            'crops' => Crop::with(['cropType', 'user'])->where('approved', 1)->get(),
+        ]) : Inertia::render('Crops/Index', [
+                        'crops' => Crop::with(['cropType', 'user'])->where('user_id', auth()->user()->id)->get(),
+                        'cropTypes' => CropType::all()
+                    ]);
     }
 
     /**
@@ -37,32 +36,17 @@ class CropController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'crop_type_id' => 'required|exists:crop_types,id',
+            'planting_date' => 'required|date',
+            'harvest_date' => 'required|date|after:planting_date',
+            'land_area' => 'required|integer',
+        ]);
 
-        // Log::info("message", $request->all());
-        // $validated = $request->validate([
-        //     'name' => 'required|string',
-        //     'color' => 'required|string',
-        //     'user_id' => 'required|exists:users,id|not_in:-1',
-        //     'coords' => 'required|array|min:1',
-        //     'coords.*.0' => 'required|numeric',
-        //     'coords.*.1' => 'required|numeric',
-        // ]);
-
-        // $crop = Crop::create([
-        //     'color' => $validated['color'],
-        //     'user_id' => $validated['user_id'],
-        //     'name' => $validated['name'],
-        // ]);
-
-        // foreach($validated['coords'] as $coord) {
-        //     Zone::create([
-        //         'crop_id' => $crop->id,
-        //         'latitude' => $coord[0],
-        //         'longitude' => $coord[1],
-        //     ]);
-        // }
+        $request->user()->crops()->create($validated);
 
         return redirect(route('crops.index'));
     }
@@ -86,9 +70,29 @@ class CropController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Crop $crop)
+    public function update(Request $request, Crop $crop): RedirectResponse
     {
-        //
+        if (auth()->user()->role === 'bmao') {
+            $crop->update([
+                'approved' => 1,
+            ]);
+
+            return redirect(route('pending-crops'));
+        } else {
+            $validated = $request->validate([
+                'planting_date' => 'required|date',
+                'harvest_date' => 'required|date|after:planting_date',
+                'land_area' => 'required|integer',
+            ]);
+
+            $crop->where('id', $crop->id)->update([
+                'planting_date' => $validated['planting_date'],
+                'harvest_date' => $validated['harvest_date'],
+                'land_area' => $validated['land_area'],
+            ]);
+
+            return redirect(route('crops.index'));
+        }
     }
 
     /**
@@ -96,6 +100,8 @@ class CropController extends Controller
      */
     public function destroy(Crop $crop)
     {
-        //
+        $crop->delete();
+
+        return redirect(auth()->user()->role === 'bmao' ? route('pending-crops') : route('crops.index'));
     }
 }

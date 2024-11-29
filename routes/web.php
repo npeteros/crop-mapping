@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\BarangayController;
 use App\Http\Controllers\CropController;
+use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FarmController;
+use App\Http\Controllers\FertilizerController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\PrecreatedUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\SeedController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Middleware\AdminAccess;
 use App\Models\Barangay;
@@ -20,6 +23,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Inertia\Response;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -43,7 +47,25 @@ Route::get('/maps', function () {
                 $query->where('role', 'farmer');
             }
         ])->get(),
-        'farms' => auth()->user()->role === 'farmer' ? Farm::with(['zones'])->find($farmId) : Farm::with(['zones', 'user', 'precreatedUser', 'user.barangay', 'precreatedUser.barangay'])->get(),
+        'farms' => auth()->user()->role === 'farmer' ? Farm::with([
+            'zones',
+            'user',
+            'user.barangay',
+            'user.crops' => function ($query) {
+                $query->where('approved', 1);
+            },
+            'user.crops.cropType'
+        ])->find($farmId) : Farm::with([
+                'zones',
+                'user',
+                'precreatedUser',
+                'user.barangay',
+                'precreatedUser.barangay',
+                'user.crops' => function ($query) {
+                    $query->where('approved', 1);
+                },
+                'user.crops.cropType'
+            ])->get(),
     ]);
 })->middleware(['auth', 'verified'])->name('maps');
 
@@ -54,6 +76,16 @@ Route::resource('farms', FarmController::class)
 Route::resource('zones', ZoneController::class)
     ->only(['store'])
     ->middleware(['auth', 'verified', AdminAccess::class]);
+
+Route::resource('crops', CropController::class)
+    ->only(['index', 'store', 'update', 'destroy'])
+    ->middleware(['auth', 'verified']);
+
+Route::get('/pending-crops', function (): Response {
+    return Inertia::render('PendingCrops', [
+        'crops' => Crop::with(['cropType', 'user'])->where('approved', 0)->get(),
+    ]);
+})->middleware(['auth', 'verified', AdminAccess::class])->name('pending-crops');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard', [
@@ -107,6 +139,16 @@ Route::resource('insurance', InsuranceController::class)
 Route::resource('resources', ResourceController::class)
     ->only(['index', 'create', 'store', 'show'])
     ->middleware(['auth', 'verified']);
+
+Route::resource('fertilizers', FertilizerController::class)
+    ->only(['update', 'destroy'])
+    ->middleware(['auth', 'verified', AdminAccess::class]);
+Route::resource('equipments', EquipmentController::class)
+    ->only(['update', 'destroy'])
+    ->middleware(['auth', 'verified', AdminAccess::class]);
+Route::resource('seeds', SeedController::class)
+    ->only(['update', 'destroy'])
+    ->middleware(['auth', 'verified', AdminAccess::class]);
 
 // Route::get('/resources', function () {
 //     return Inertia::render('Resources', [

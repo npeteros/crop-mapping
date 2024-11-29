@@ -1,3 +1,4 @@
+import AddModal from "@/Components/AddModal";
 import InputError from "@/Components/InputError";
 import Modal from "@/Components/Modal";
 import NavLink from "@/Components/NavLink";
@@ -8,14 +9,9 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 function DeletePrecreatedUser({ user }) {
-    const { data, destroy, processing, errors } = useForm({
-        id: user.id,
-        farmId: user.farm_id,
-    });
-
     return (
         <Link
-            href={route("precreated-users.destroy", data.id)}
+            href={route("precreated-users.destroy", user.id)}
             method="delete"
             className="font-medium text-red-600 dark:text-red-500 hover:underline"
         >
@@ -59,8 +55,6 @@ export default function Profiles({ precreated, users, barangays }) {
             .sort((a, b) => a.last_name.localeCompare(b.last_name))
             .slice(startIndex, startIndex + pagination.pageSize)
     );
-
-    const [showModal, setShowModal] = useState(false);
 
     const totalPages = Math.ceil(
         tab == 0
@@ -204,142 +198,12 @@ export default function Profiles({ precreated, users, barangays }) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route("precreated-users.store"), {
-            onSuccess: () => setShowModal(false),
-        });
+        post(route("precreated-users.store"));
     };
 
     return (
         <AuthenticatedLayout>
             <Head title="Profiles" />
-            <Modal
-                show={showModal}
-                onClose={() => setShowModal(false)}
-                maxWidth="2xl"
-            >
-                <form className="p-8 flex flex-col gap-4" onSubmit={submit}>
-                    <span className="text-xl font-bold">
-                        Precreate an Account
-                    </span>
-                    <div className="flex flex-col gap-2">
-                        <div className="flex flex-col gap-1">
-                            <label htmlFor="name">RSBA Number: </label>
-                            <input
-                                type="text"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                value={data.rsba}
-                                onChange={(e) =>
-                                    setData("rsba", e.target.value)
-                                }
-                                required
-                            />
-                            <InputError message={errors.rsba} />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <label htmlFor="name">Farmer Name: </label>
-                            <div className="grid grid-cols-3 gap-2">
-                                <div className="flex flex-col gap-1">
-                                    <input
-                                        type="text"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        value={data.lastName}
-                                        onChange={(e) =>
-                                            setData("lastName", e.target.value)
-                                        }
-                                        placeholder="Last Name"
-                                        required
-                                    />
-                                    <InputError message={errors.lastName} />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <input
-                                        type="text"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        value={data.firstName}
-                                        onChange={(e) =>
-                                            setData("firstName", e.target.value)
-                                        }
-                                        placeholder="First Name"
-                                        required
-                                    />
-                                    <InputError message={errors.firstName} />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <input
-                                        type="text"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        value={data.middleName}
-                                        onChange={(e) =>
-                                            setData(
-                                                "middleName",
-                                                e.target.value
-                                            )
-                                        }
-                                        placeholder="Middle Name"
-                                    />
-                                    <InputError message={errors.middleName} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <label htmlFor="name">Email: </label>
-                            <input
-                                type="email"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                value={data.email}
-                                onChange={(e) =>
-                                    setData("email", e.target.value)
-                                }
-                                required
-                            />
-                            <InputError message={errors.email} />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <label htmlFor="name">Barangay: </label>
-                            <select
-                                value={data.barangayId}
-                                onChange={(e) =>
-                                    setData("barangayId", e.target.value)
-                                }
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required
-                            >
-                                {barangays.map((barangay) => (
-                                    <option
-                                        key={barangay.id}
-                                        value={barangay.id}
-                                    >
-                                        {barangay.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <InputError message={errors.barangayId} />
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                            <label htmlFor="name">Temporary Password: </label>
-                            <input
-                                type="password"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                value={data.password}
-                                onChange={(e) =>
-                                    setData("password", e.target.value)
-                                }
-                                required
-                            />
-                            <InputError message={errors.password} />
-                        </div>
-                    </div>
-                    <div className="w-full flex justify-center gap-2">
-                        <SecondaryButton onClick={() => setShowModal(false)}>
-                            Cancel
-                        </SecondaryButton>
-                        <PrimaryButton disabled={processing}>
-                            Draw Farm
-                        </PrimaryButton>
-                    </div>
-                </form>
-            </Modal>
             <div className="w-screen px-6 lg:px-8 py-12 gap-8 flex flex-col">
                 <input
                     type="search"
@@ -376,12 +240,137 @@ export default function Profiles({ precreated, users, barangays }) {
                         </ul>
 
                         <div className="inline-flex items-center px-1 pt-1 text-sm">
-                            <button
-                                className="border-2 border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white px-12 py-2 rounded-lg"
-                                onClick={() => setShowModal(true)}
+                            <AddModal
+                                title={"Precreate an Account"}
+                                onSubmit={submit}
+                                processing={processing}
+                                submitText="Draw Farm"
                             >
-                                Add
-                            </button>
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="name">RSBA Number: </label>
+                                    <input
+                                        type="text"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        value={data.rsba}
+                                        onChange={(e) =>
+                                            setData("rsba", e.target.value)
+                                        }
+                                        required
+                                    />
+                                    <InputError message={errors.rsba} />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="name">Farmer Name: </label>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <div className="flex flex-col gap-1">
+                                            <input
+                                                type="text"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                value={data.lastName}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "lastName",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Last Name"
+                                                required
+                                            />
+                                            <InputError
+                                                message={errors.lastName}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <input
+                                                type="text"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                value={data.firstName}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "firstName",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="First Name"
+                                                required
+                                            />
+                                            <InputError
+                                                message={errors.firstName}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <input
+                                                type="text"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                value={data.middleName}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "middleName",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Middle Name"
+                                            />
+                                            <InputError
+                                                message={errors.middleName}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="name">Email: </label>
+                                    <input
+                                        type="email"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        value={data.email}
+                                        onChange={(e) =>
+                                            setData("email", e.target.value)
+                                        }
+                                        required
+                                    />
+                                    <InputError message={errors.email} />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="name">Barangay: </label>
+                                    <select
+                                        value={data.barangayId}
+                                        onChange={(e) =>
+                                            setData(
+                                                "barangayId",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        required
+                                    >
+                                        {barangays.map((barangay) => (
+                                            <option
+                                                key={barangay.id}
+                                                value={barangay.id}
+                                            >
+                                                {barangay.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <InputError message={errors.barangayId} />
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="name">
+                                        Temporary Password:{" "}
+                                    </label>
+                                    <input
+                                        type="password"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        value={data.password}
+                                        onChange={(e) =>
+                                            setData("password", e.target.value)
+                                        }
+                                        required
+                                    />
+                                    <InputError message={errors.password} />
+                                </div>
+                            </AddModal>
                         </div>
                     </div>
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -550,7 +539,7 @@ export default function Profiles({ precreated, users, barangays }) {
                                                       </Link>
                                                   </td>
                                                   <td className="px-6 py-4">
-                                                      {farmer.approved}
+                                                      Pending Registration
                                                   </td>
                                                   <td className="px-6 py-4">
                                                       <Link className="font-medium text-blue-600 dark:text-blue-500 hover:underline">

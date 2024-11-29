@@ -39,7 +39,7 @@ class PrecreatedUserController extends Controller
             'barangayId' => 'required|exists:barangays,id',
             'password' => 'required',
         ]);
-
+        
         $farm = Farm::create([
             'color' => '#000000'
         ]);

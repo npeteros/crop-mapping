@@ -3,7 +3,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function Profiles({ users }) {
+export default function Profiles({ crops }) {
+    console.log(crops);
     const [search, setSearch] = useState("");
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -16,13 +17,13 @@ export default function Profiles({ users }) {
 
     const startIndex = pagination.pageIndex * pagination.pageSize;
 
-    const [shownUsers, setShownUsers] = useState(
-        users
-            .sort((a, b) => a.last_name.localeCompare(b.last_name))
+    const [shownCrops, setShownCrops] = useState(
+        crops
+            .sort((a, b) => a.id - b.id)
             .slice(startIndex, startIndex + pagination.pageSize)
     );
 
-    const totalPages = Math.ceil(shownUsers.length / pagination.pageSize);
+    const totalPages = Math.ceil(shownCrops.length / pagination.pageSize);
 
     const pageNumbers = [];
     for (let i = 0; i < totalPages; i++) {
@@ -57,52 +58,71 @@ export default function Profiles({ users }) {
     }
 
     useEffect(() => {
-        setShownUsers(
-            users
+        setShownCrops(
+            crops
                 .filter(
-                    (farmer) =>
-                        farmer.rsba == search ||
-                        farmer.last_name
+                    (crop) =>
+                        crop.id.toString().includes(search) ||
+                        crop.user.last_name
                             .toLowerCase()
                             .includes(search.toLowerCase()) ||
-                        farmer.birthdate
+                        crop.user.first_name
                             .toLowerCase()
                             .includes(search.toLowerCase()) ||
-                        farmer.email
+                        (crop.user.middle_name &&
+                            crop.user.middle_name
+                                .toLowerCase()
+                                .includes(search.toLowerCase())) ||
+                        crop.crop_type.name
                             .toLowerCase()
                             .includes(search.toLowerCase()) ||
-                        farmer.crops
-                            .map((crop) => crop.name.toLowerCase())
-                            .includes(search.toLowerCase())
+                        crop.planting_date
+                            .toLowerCase()
+                            .includes(search.toLowerCase()) ||
+                        crop.land_area.toString().includes(search)
                 )
                 .sort((a, b) => {
                     switch (sorting.field) {
                         case "id":
                             return sorting.direction === "asc"
-                                ? a.rsba - b.rsba
-                                : b.rsba - a.rsba;
-                        case "name":
+                                ? a.id - b.id
+                                : b.id - a.id;
+                        case "farmer":
                             return sorting.direction === "asc"
-                                ? a.last_name.localeCompare(b.last_name)
-                                : b.last_name.localeCompare(a.last_name);
-                        case "birthdate":
+                                ? a.user.last_name.localeCompare(
+                                      b.user.last_name
+                                  )
+                                : b.user.last_name.localeCompare(
+                                      a.user.last_name
+                                  );
+                        case "cropType":
                             return sorting.direction === "asc"
-                                ? a.birthdate.localeCompare(b.birthdate)
-                                : b.birthdate.localeCompare(a.birthdate);
-                        case "email":
+                                ? a.crop_type.name.localeCompare(
+                                      b.crop_type.name
+                                  )
+                                : b.crop_type.name.localeCompare(
+                                      a.crop_type.name
+                                  );
+                        case "plantingDate":
                             return sorting.direction === "asc"
-                                ? a.email.localeCompare(b.email)
-                                : b.email.localeCompare(a.email);
+                                ? a.planting_date.localeCompare(b.planting_date)
+                                : b.planting_date.localeCompare(
+                                      a.planting_date
+                                  );
+                        case "landArea":
+                            return sorting.direction === "asc"
+                                ? a.land_area - b.land_area
+                                : b.land_area - a.land_area;
                     }
 
                     return 0;
                 })
         );
-    }, [pagination.pageIndex, users, sorting, search]);
+    }, [pagination.pageIndex, crops, sorting, search]);
 
     return (
         <AuthenticatedLayout>
-            <Head title="Farmer Registration" />
+            <Head title="Profiles" />
 
             <div className="w-screen px-6 lg:px-8 py-12 gap-8 flex flex-col">
                 <input
@@ -119,7 +139,7 @@ export default function Profiles({ users }) {
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            RSBA Number
+                                            Crop ID
                                             <button
                                                 onClick={() => handleSort("id")}
                                             >
@@ -137,10 +157,10 @@ export default function Profiles({ users }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Name
+                                            Farmer
                                             <button
                                                 onClick={() =>
-                                                    handleSort("name")
+                                                    handleSort("farmer")
                                                 }
                                             >
                                                 <svg
@@ -157,10 +177,10 @@ export default function Profiles({ users }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Birthdate
+                                            Crop Type
                                             <button
                                                 onClick={() =>
-                                                    handleSort("birthdate")
+                                                    handleSort("cropType")
                                                 }
                                             >
                                                 <svg
@@ -177,10 +197,10 @@ export default function Profiles({ users }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Email
+                                            Planting Date
                                             <button
                                                 onClick={() =>
-                                                    handleSort("email")
+                                                    handleSort("plantingDate")
                                                 }
                                             >
                                                 <svg
@@ -197,7 +217,22 @@ export default function Profiles({ users }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Date Registered
+                                            Land Area
+                                            <button
+                                                onClick={() =>
+                                                    handleSort("landArea")
+                                                }
+                                            >
+                                                <svg
+                                                    className="w-3 h-3 ms-1.5"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
+                                                </svg>
+                                            </button>
                                         </div>
                                     </th>
                                     <th scope="col" className="px-6 py-3">
@@ -208,53 +243,60 @@ export default function Profiles({ users }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {shownUsers
+                                {shownCrops
                                     .slice(
                                         startIndex,
                                         startIndex + pagination.pageSize
                                     )
-                                    .map((farmer) => (
+                                    .map((crop) => (
                                         <tr
                                             className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                            key={farmer.id}
+                                            key={crop.id}
                                         >
                                             <td className="px-6 py-4">
-                                                {farmer.rsba}
+                                                {crop.id}
                                             </td>
                                             <th
                                                 scope="row"
                                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                             >
-                                                {farmer.last_name},{" "}
-                                                {farmer.first_name}{" "}
-                                                {farmer.middle_name ??
+                                                {crop.user.last_name},{" "}
+                                                {crop.user.first_name}{" "}
+                                                {crop.user.middle_name ??
                                                     undefined}
                                             </th>
                                             <td className="px-6 py-4">
+                                                {crop.crop_type.name}
+                                            </td>
+                                            <td className="px-6 py-4">
                                                 {formatDateToMMDDYYYY(
-                                                    farmer.birthdate
+                                                    crop.planting_date
                                                 )}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {farmer.email}
-                                            </td>
-                                            <td className="py-4 grid grid-cols-4 gap-2 w-fit">
-                                                {formatDateToMMDDYYYY(
-                                                    farmer.created_at
-                                                )}
+                                                {crop.land_area}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <Link
-                                                    href={route(
-                                                        "farmer-registrations",
-                                                        {
-                                                            id: farmer.id,
-                                                        }
-                                                    )}
-                                                    method="post"
                                                     className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                                    href={route(
+                                                        "crops.update",
+                                                        crop.id
+                                                    )}
+                                                    method="patch"
                                                 >
                                                     Approve
+                                                </Link>{" "}
+                                                /{" "}
+                                                <Link
+                                                    className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                                                    href={route(
+                                                        "crops.destroy",
+                                                        crop.id
+                                                    )}
+                                                    method="delete"
+                                                >
+                                                    Reject
                                                 </Link>
                                             </td>
                                         </tr>
@@ -278,7 +320,7 @@ export default function Profiles({ users }) {
                                 </span>{" "}
                                 of{" "}
                                 <span className="font-semibold text-gray-900 dark:text-white">
-                                    {shownUsers.length}
+                                    {shownCrops.length}
                                 </span>
                             </span>
                             <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">

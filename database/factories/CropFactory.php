@@ -17,8 +17,12 @@ class CropFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
-            'color' => fake()->hexColor()
+            'user_id' => 1,
+            'crop_type_id' => 1,
+            'planting_date' => fake()->date(),
+            'harvest_date' => fake()->date(),
+            'land_area' => fake()->numberBetween(1, 99),
+            'approved' => fake()->boolean(),
         ];
     }
 }

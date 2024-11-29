@@ -1,7 +1,10 @@
+import AddModal from "@/Components/AddModal";
+import InputError from "@/Components/InputError";
 import NavLink from "@/Components/NavLink";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import AdminEditResource from "./AdminEditResource";
 
 export default function Insurance({ fertilizers, equipments, seeds }) {
     const [search, setSearch] = useState("");
@@ -35,7 +38,13 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
             .slice(startIndex, startIndex + pagination.pageSize)
     );
 
-    const totalPages = Math.ceil(tab == 0 ? shownFertilizers.length : tab == 1 ? shownEquipments.length : shownSeeds.length / pagination.pageSize);
+    const totalPages = Math.ceil(
+        tab == 0
+            ? shownFertilizers.length / pagination.pageSize
+            : tab == 1
+            ? shownEquipments.length / pagination.pageSize
+            : shownSeeds.length / pagination.pageSize
+    );
 
     const pageNumbers = [];
     for (let i = 0; i < totalPages; i++) {
@@ -152,6 +161,23 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
         }
     }, [pagination.pageIndex, fertilizers, equipments, seeds, sorting, search]);
 
+    const { data, setData, post, processing, errors, reset } = useForm({
+        category: 1,
+        name: "",
+        type: "organic",
+        quantity: 1,
+    });
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route("resources.store"), {
+            onSuccess: () => {
+                reset();
+            },
+        });
+    };
+
     return (
         <AuthenticatedLayout>
             <Head title="Profiles" />
@@ -202,11 +228,79 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                             </li>
                         </ul>
 
-                        <NavLink>
-                            <button className="border-2 border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white px-12 py-2 rounded-lg">
-                                Add
-                            </button>
-                        </NavLink>
+                        <AddModal
+                            title="Add New Resource"
+                            onSubmit={submit}
+                            processing={processing}
+                        >
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="name">
+                                    Resource Category:{" "}
+                                </label>
+                                <select
+                                    value={data.category}
+                                    onChange={(e) =>
+                                        setData("category", e.target.value)
+                                    }
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required
+                                >
+                                    <option value="1">Fertilizer</option>
+                                    <option value="2">Equipment</option>
+                                    <option value="3">Seed</option>
+                                </select>
+                                <InputError message={errors.category} />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="name">Resource Name: </label>
+                                <input
+                                    type="text"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    value={data.name}
+                                    isFocused={true}
+                                    onChange={(e) =>
+                                        setData("name", e.target.value)
+                                    }
+                                    placeholder=" "
+                                />
+                                <InputError message={errors.name} />
+                            </div>
+                            {data.category == 1 && (
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="name">
+                                        Fertilizer Type:{" "}
+                                    </label>
+                                    <select
+                                        value={data.type}
+                                        onChange={(e) =>
+                                            setData("type", e.target.value)
+                                        }
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        required
+                                    >
+                                        <option value="organic">Organic</option>
+                                        <option value="inorganic">
+                                            Inorganic
+                                        </option>
+                                    </select>
+                                    <InputError message={errors.type} />
+                                </div>
+                            )}
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="name">Quantity: </label>
+                                <input
+                                    type="number"
+                                    value={data.quantity}
+                                    isFocused={true}
+                                    onChange={(e) =>
+                                        setData("quantity", e.target.value)
+                                    }
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder=" "
+                                />
+                                <InputError message={errors.quantity} />
+                            </div>
+                        </AddModal>
                     </div>
                     <div className="relative overflow-x-auto shadow-md">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -255,7 +349,7 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                                                 </>
                                             ) : tab == 1 ? (
                                                 <>
-                                                    <span>Quantity</span>
+                                                    <span>Stocks</span>
                                                     <button
                                                         onClick={() =>
                                                             handleSort(
@@ -276,7 +370,7 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <span>Stock</span>
+                                                    <span>Stocks</span>
                                                     <button
                                                         onClick={() =>
                                                             handleSort("stock")
@@ -356,23 +450,18 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                                                       {fertilizer.stock}
                                                   </td>
                                                   <td className="px-6 py-4 flex items-center justify-center gap-1">
-                                                      <button
-                                                          href="#"
-                                                          className="font-medium flex gap-1 items-center text-blue-500 hover:underline p-2 border-2 border-blue-600 dark:border-blue-500 hover:text-white hover:bg-blue-600 dark:hover:bg-blue-500 rounded-md"
-                                                      >
-                                                          <svg
-                                                              width="16"
-                                                              height="16"
-                                                              fill="currentColor"
-                                                              viewBox="0 0 24 24"
-                                                              xmlns="http://www.w3.org/2000/svg"
-                                                          >
-                                                              <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17Z"></path>
-                                                          </svg>
-                                                          Edit
-                                                      </button>
-                                                      <button
-                                                          href="#"
+                                                      <AdminEditResource
+                                                          resource={{
+                                                              ...fertilizer,
+                                                              category: 1,
+                                                          }}
+                                                      />
+                                                      <Link
+                                                          href={route(
+                                                              "fertilizers.destroy",
+                                                              fertilizer.id
+                                                          )}
+                                                          method="delete"
                                                           className="font-medium flex gap-1 items-center text-red-500 hover:underline p-2 border-2 border-red-600 dark:border-red-500 hover:text-white hover:bg-red-600 dark:hover:bg-red-500 rounded-md"
                                                       >
                                                           <svg
@@ -390,7 +479,7 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                                                               <path d="m6 6 12 12"></path>
                                                           </svg>
                                                           Delete
-                                                      </button>
+                                                      </Link>
                                                   </td>
                                               </tr>
                                           ))
@@ -415,23 +504,18 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                                                       {equipment.quantity}
                                                   </td>
                                                   <td className="px-6 py-4 flex items-center justify-center gap-1">
-                                                      <button
-                                                          href="#"
-                                                          className="font-medium flex gap-1 items-center text-blue-500 hover:underline p-2 border-2 border-blue-600 dark:border-blue-500 hover:text-white hover:bg-blue-600 dark:hover:bg-blue-500 rounded-md"
-                                                      >
-                                                          <svg
-                                                              width="16"
-                                                              height="16"
-                                                              fill="currentColor"
-                                                              viewBox="0 0 24 24"
-                                                              xmlns="http://www.w3.org/2000/svg"
-                                                          >
-                                                              <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17Z"></path>
-                                                          </svg>
-                                                          Edit
-                                                      </button>
-                                                      <button
-                                                          href="#"
+                                                      <AdminEditResource
+                                                          resource={{
+                                                              ...equipment,
+                                                              category: 2,
+                                                          }}
+                                                      />
+                                                      <Link
+                                                          href={route(
+                                                              "equipments.destroy",
+                                                              equipment.id
+                                                          )}
+                                                          method="delete"
                                                           className="font-medium flex gap-1 items-center text-red-500 hover:underline p-2 border-2 border-red-600 dark:border-red-500 hover:text-white hover:bg-red-600 dark:hover:bg-red-500 rounded-md"
                                                       >
                                                           <svg
@@ -449,7 +533,7 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                                                               <path d="m6 6 12 12"></path>
                                                           </svg>
                                                           Delete
-                                                      </button>
+                                                      </Link>
                                                   </td>
                                               </tr>
                                           ))
@@ -473,23 +557,18 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                                                       {seed.stock}
                                                   </td>
                                                   <td className="px-6 py-4 flex items-center justify-center gap-1">
-                                                      <button
-                                                          href="#"
-                                                          className="font-medium flex gap-1 items-center text-blue-500 hover:underline p-2 border-2 border-blue-600 dark:border-blue-500 hover:text-white hover:bg-blue-600 dark:hover:bg-blue-500 rounded-md"
-                                                      >
-                                                          <svg
-                                                              width="16"
-                                                              height="16"
-                                                              fill="currentColor"
-                                                              viewBox="0 0 24 24"
-                                                              xmlns="http://www.w3.org/2000/svg"
-                                                          >
-                                                              <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17Z"></path>
-                                                          </svg>
-                                                          Edit
-                                                      </button>
-                                                      <button
-                                                          href="#"
+                                                      <AdminEditResource
+                                                          resource={{
+                                                              ...seed,
+                                                              category: 3,
+                                                          }}
+                                                      />
+                                                      <Link
+                                                          href={route(
+                                                              "seeds.destroy",
+                                                              seed.id
+                                                          )}
+                                                          method="delete"
                                                           className="font-medium flex gap-1 items-center text-red-500 hover:underline p-2 border-2 border-red-600 dark:border-red-500 hover:text-white hover:bg-red-600 dark:hover:bg-red-500 rounded-md"
                                                       >
                                                           <svg
@@ -507,7 +586,7 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
                                                               <path d="m6 6 12 12"></path>
                                                           </svg>
                                                           Delete
-                                                      </button>
+                                                      </Link>
                                                   </td>
                                               </tr>
                                           ))}

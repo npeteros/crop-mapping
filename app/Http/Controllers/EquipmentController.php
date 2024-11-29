@@ -52,7 +52,17 @@ class EquipmentController extends Controller
      */
     public function update(Request $request, Equipment $equipment)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        $equipment->update([
+            'name' => $validated['name'],
+            'quantity' => $validated['quantity'],
+        ]);
+
+        return redirect(route('resources.index'));
     }
 
     /**
@@ -60,6 +70,8 @@ class EquipmentController extends Controller
      */
     public function destroy(Equipment $equipment)
     {
-        //
+        $equipment->delete();
+
+        return redirect(route('resources.index'));
     }
 }

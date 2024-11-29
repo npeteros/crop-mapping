@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('crops', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('color');
+            $table->foreignId('crop_type_id')->constrained()->cascadeOnDelete();
+            $table->date('planting_date');
+            $table->date('harvest_date');
+            $table->integer('land_area');
+            $table->boolean('approved')->default(false);
             $table->timestamps();
         });
     }

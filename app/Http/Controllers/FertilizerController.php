@@ -52,7 +52,19 @@ class FertilizerController extends Controller
      */
     public function update(Request $request, Fertilizer $fertilizer)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'type' => 'required|string|in:organic,inorganic',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        $fertilizer->update([
+            'name' => $validated['name'],
+            'type' => $validated['type'],
+            'stock' => $validated['quantity'],
+        ]);
+
+        return redirect(route('resources.index'));
     }
 
     /**
@@ -60,6 +72,8 @@ class FertilizerController extends Controller
      */
     public function destroy(Fertilizer $fertilizer)
     {
-        //
+        $fertilizer->delete();
+
+        return redirect(route('resources.index'));
     }
 }

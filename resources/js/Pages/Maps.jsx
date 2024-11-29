@@ -5,6 +5,7 @@ import { Head, usePage } from "@inertiajs/react";
 
 export default function Maps({ barangays, farms }) {
     const user = usePage().props.auth.user;
+    console.log(farms)
     return user.role === "bmao" ? (
         <AuthenticatedLayout>
             <Head title="Maps" />

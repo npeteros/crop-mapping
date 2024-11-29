@@ -37,7 +37,56 @@ class ResourceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'category' => 'required|integer|in:1,2,3',
+            'name' => 'required|string',
+            'type' => 'required_if:category,1|string',
+            'quantity' => 'required|integer|min:0',
+        ]);
+        
+        switch($validated['category']) {
+            case 1:
+                if (!Fertilizer::where('name', $validated['name'])->exists()) {
+                    Fertilizer::create([
+                        'name' => $validated['name'],
+                        'type' => $validated['type'],
+                        'stock' => $validated['quantity'],
+                    ]);
+                } else {
+                    $fertilizer = Fertilizer::where('name', $validated['name'])->first();
+                    $fertilizer->update([
+                        'stock' => $fertilizer->stock + $validated['quantity'],
+                    ]);
+                }
+                break;
+            case 2:
+                if (!Equipment::where('name', $validated['name'])->exists()) {
+                    Equipment::create([
+                        'name' => $validated['name'],
+                        'quantity' => $validated['quantity'],
+                    ]);
+                } else {
+                    $equipment = Equipment::where('name', $validated['name'])->first();
+                    $equipment->update([
+                        'quantity' => $equipment->quantity + $validated['quantity'],
+                    ]);
+                }
+                break;
+            case 3:
+                if (!Seed::where('name', $validated['name'])->exists()) {
+                    Seed::create([
+                        'name' => $validated['name'],
+                        'stock' => $validated['quantity'],
+                    ]);
+                } else {
+                    $seed = Seed::where('name', $validated['name'])->first();
+                    $seed->update([
+                        'stock' => $seed->stock + $validated['quantity'],
+                    ]);
+                }
+                break;
+        }
+        return redirect(route('resources.index'));
     }
 
     /**

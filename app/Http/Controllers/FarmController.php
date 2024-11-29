@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Barangay;
 use App\Models\Farm;
 use App\Models\PrecreatedUser;
 use App\Models\User;
 use App\Models\Zone;
-use App\Rules\ExistsUser;
-use Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Log;
 
 class FarmController extends Controller
 {

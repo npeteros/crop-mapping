@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Barangay;
+use App\Models\Crop;
+use App\Models\CropType;
 use App\Models\Equipment;
 use App\Models\Fertilizer;
 use App\Models\Seed;
@@ -51,10 +53,43 @@ class DatabaseSeeder extends Seeder
             'Vito'
         ];
 
+        $cropTypes = [
+            'Rice',
+            'Corn',
+            'Eggplant',
+            'Beans',
+            'Ampalaya',
+            'Pechay',
+            'Pepper',
+            'Tomatoes',
+            'Coconuts',
+            'Mango',
+            'Guyabano'
+        ];
+
         foreach ($barangays as $barangay) {
             Barangay::factory()->create([
                 'name' => $barangay
             ]);
+        }
+
+        foreach ($cropTypes as $cropType) {
+            $newCropType = CropType::factory()->create([
+                'name' => $cropType
+            ]);
+
+            // $user = User::factory()->create();
+
+            // for ($i = 1; $i <= 2; $i++) {
+            //     Crop::factory()->create([
+            //         'user_id' => $user->id,
+            //         'crop_type_id' => $newCropType->id,
+            //         'planting_date' => fake()->date(),
+            //         'harvest_date' => fake()->date(),
+            //         'land_area' => fake()->numberBetween(1, 99),
+            //         'approved' => fake()->boolean(),
+            //     ]);
+            // }
         }
 
         User::factory()->create([
@@ -78,62 +113,54 @@ class DatabaseSeeder extends Seeder
             'role' => 'bmao'
         ]);
 
-        Fertilizer::factory()->create([
-            'name' => 'Urea',
-            'type' => 'inorganic',
-            'stock' => 3
-        ]);
+        // Fertilizer::factory()->create([
+        //     'name' => 'Urea',
+        //     'type' => 'inorganic',
+        //     'stock' => 3
+        // ]);
 
-        Fertilizer::factory()->create([
-            'name' => 'Chicken Manure',
-            'type' => 'organic',
-            'stock' => 10
-        ]);
+        // Fertilizer::factory()->create([
+        //     'name' => 'Chicken Manure',
+        //     'type' => 'organic',
+        //     'stock' => 10
+        // ]);
 
-        Fertilizer::factory()->create([
-            'name' => 'Cow Manure',
-            'type' => 'organic',
-            'stock' => 15
-        ]);
+        // Fertilizer::factory()->create([
+        //     'name' => 'Cow Manure',
+        //     'type' => 'organic',
+        //     'stock' => 15
+        // ]);
 
-        Equipment::factory()->create([
-            'name' => 'Tractor',
-            'quantity' => 1
-        ]);
+        // Equipment::factory()->create([
+        //     'name' => 'Tractor',
+        //     'quantity' => 1
+        // ]);
 
-        Equipment::factory()->create([
-            'name' => 'Water Pumps',
-            'quantity' => 2
-        ]);
+        // Equipment::factory()->create([
+        //     'name' => 'Water Pumps',
+        //     'quantity' => 2
+        // ]);
 
-        Equipment::factory()->create([
-            'name' => 'Sprayers',
-            'quantity' => 20
-        ]);
+        // Equipment::factory()->create([
+        //     'name' => 'Sprayers',
+        //     'quantity' => 20
+        // ]);
 
-        Seed::factory()->create([
-            'name' => 'Rice',
-            'stock' => 4
-        ]);
+        // Seed::factory()->create([
+        //     'name' => 'Rice',
+        //     'stock' => 4
+        // ]);
 
-        Seed::factory()->create([
-            'name' => 'Corn',
-            'stock' => 5
-        ]);
+        // Seed::factory()->create([
+        //     'name' => 'Corn',
+        //     'stock' => 5
+        // ]);
 
-        Seed::factory()->create([
-            'name' => 'Tomato',
-            'stock' => 6
-        ]);
+        // Seed::factory()->create([
+        //     'name' => 'Tomato',
+        //     'stock' => 6
+        // ]);
 
         // User::factory(50)->create();
-
-        // for ($i = 0; $i < 50; $i++) {
-        //     $user = User::factory()->create();
-
-        //     Crop::factory()->create([
-        //         'user_id' => $user->id
-        //     ]);
-        // }
     }
 }

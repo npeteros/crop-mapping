@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Seed;
+use App\Models\CropType;
 use Illuminate\Http\Request;
 
-class SeedController extends Controller
+class CropTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class SeedController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Seed $seed)
+    public function show(CropType $cropType)
     {
         //
     }
@@ -42,7 +42,7 @@ class SeedController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Seed $seed)
+    public function edit(CropType $cropType)
     {
         //
     }
@@ -50,28 +50,16 @@ class SeedController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Seed $seed)
+    public function update(Request $request, CropType $cropType)
     {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'quantity' => 'required|integer|min:0',
-        ]);
-
-        $seed->update([
-            'name' => $validated['name'],
-            'stock' => $validated['quantity'],
-        ]);
-
-        return redirect(route('resources.index'));
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Seed $seed)
+    public function destroy(CropType $cropType)
     {
-        $seed->delete();
-
-        return redirect(route('resources.index'));
+        //
     }
 }

@@ -1,3 +1,4 @@
+import AddModal from "@/Components/AddModal";
 import FarmerNavbar from "@/Components/FarmerNavbar";
 import Modal from "@/Components/Modal";
 import NavLink from "@/Components/NavLink";
@@ -50,7 +51,13 @@ export default function Resources({ fertilizers, equipments, seeds }) {
             .slice(startIndex, startIndex + pagination.pageSize)
     );
 
-    const totalPages = Math.ceil(tab == 0 ? shownFertilizers.length : tab == 1 ? shownEquipments.length : shownSeeds.length / pagination.pageSize);
+    const totalPages = Math.ceil(
+        tab == 0
+            ? shownFertilizers.length / pagination.pageSize
+            : tab == 1
+            ? shownEquipments.length / pagination.pageSize
+            : shownSeeds.length / pagination.pageSize
+    );
 
     const pageNumbers = [];
     for (let i = 0; i < totalPages; i++) {
@@ -167,22 +174,66 @@ export default function Resources({ fertilizers, equipments, seeds }) {
         }
     }, [pagination.pageIndex, fertilizers, equipments, seeds, sorting, search]);
 
+    const submit = (e) => {
+        e.preventDefault();
+    };
+
     return (
         <>
-            <Head title="Apply for Insurance" />
+            <Head title="Resources" />
 
             <FarmerNavbar user={user} />
 
-            <Modal
-                show={showModal}
-                onClose={() => setShowModal(false)}
-                maxWidth="2xl"
-            >
-                <form className="p-8 flex flex-col gap-4">
-                    <span className="text-xl font-bold">
-                        Request for Resources
-                    </span>
-                    <div className="flex flex-col gap-2">
+            <div className="my-8 flex flex-col gap-2 max-w-7xl mx-auto">
+                <input
+                    type="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="rounded-full h-10 w-1/2 border-gray-400 ps-4"
+                    placeholder="Search..."
+                />
+                <div className="w-full flex justify-between">
+                    <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 dark:text-gray-400">
+                        <li className="me-2">
+                            <button
+                                className={`inline-block p-4 hover:text-secondary-light outline:border-red-500 ${
+                                    tab == 0 &&
+                                    "text-secondary-light dark:text-secondary-dark"
+                                }`}
+                                onClick={() => setTab(0)}
+                            >
+                                Fertilizers
+                            </button>
+                        </li>
+                        <li className="me-2">
+                            <button
+                                className={`inline-block p-4 hover:text-secondary-light outline:border-red-500 ${
+                                    tab == 1 &&
+                                    "text-secondary-light dark:text-secondary-dark"
+                                }`}
+                                onClick={() => setTab(1)}
+                            >
+                                Equipments
+                            </button>
+                        </li>
+                        <li className="me-2">
+                            <button
+                                className={`inline-block p-4 hover:text-secondary-light outline:border-red-500 ${
+                                    tab == 2 &&
+                                    "text-secondary-light dark:text-secondary-dark"
+                                }`}
+                                onClick={() => setTab(2)}
+                            >
+                                Seeds
+                            </button>
+                        </li>
+                    </ul>
+
+                    <AddModal
+                        title="Request for Resources"
+                        onSubmit={submit}
+                        processing={processing}
+                    >
                         <div className="flex flex-col gap-1">
                             <label htmlFor="name">Farmer Name: </label>
                             <input
@@ -263,65 +314,7 @@ export default function Resources({ fertilizers, equipments, seeds }) {
                                     : null}
                             </select>
                         </div>
-                    </div>
-                    <div className="w-full flex justify-center gap-2">
-                        <SecondaryButton onClick={() => setShowModal(false)} >Cancel</SecondaryButton>
-                        <PrimaryButton>Submit</PrimaryButton>
-                    </div>
-                </form>
-            </Modal>
-
-            <div className="my-8 flex flex-col gap-2 max-w-7xl mx-auto">
-                <input
-                    type="search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="rounded-full h-10 w-1/2 border-gray-400 ps-4"
-                    placeholder="Search..."
-                />
-                <div className="w-full flex justify-between">
-                    <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 dark:text-gray-400">
-                        <li className="me-2">
-                            <button
-                                className={`inline-block p-4 hover:text-secondary-light outline:border-red-500 ${
-                                    tab == 0 &&
-                                    "text-secondary-light dark:text-secondary-dark"
-                                }`}
-                                onClick={() => setTab(0)}
-                            >
-                                Fertilizers
-                            </button>
-                        </li>
-                        <li className="me-2">
-                            <button
-                                className={`inline-block p-4 hover:text-secondary-light outline:border-red-500 ${
-                                    tab == 1 &&
-                                    "text-secondary-light dark:text-secondary-dark"
-                                }`}
-                                onClick={() => setTab(1)}
-                            >
-                                Equipments
-                            </button>
-                        </li>
-                        <li className="me-2">
-                            <button
-                                className={`inline-block p-4 hover:text-secondary-light outline:border-red-500 ${
-                                    tab == 2 &&
-                                    "text-secondary-light dark:text-secondary-dark"
-                                }`}
-                                onClick={() => setTab(2)}
-                            >
-                                Seeds
-                            </button>
-                        </li>
-                    </ul>
-
-                    <button
-                        className="border-2 border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white px-12 py-2 rounded-lg"
-                        onClick={() => setShowModal(true)}
-                    >
-                        Request
-                    </button>
+                    </AddModal>
                 </div>
                 <div className="relative overflow-x-auto shadow-md">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

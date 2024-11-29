@@ -40,7 +40,6 @@ class RegisteredUserController extends Controller
         ]);
 
         $precreatedUser = PrecreatedUser::where('rsba', $validated['rsba'])
-            ->where('email', $validated['email'])
             ->first();
 
         if (!$precreatedUser) {

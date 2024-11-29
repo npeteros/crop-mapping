@@ -30,6 +30,16 @@ export default function Map({ barangays, farms }) {
         coords: [],
     });
 
+    const cropTypeNames = Array.from(
+        new Set(
+            user.role === "bmao"
+                ? farms.map((farm) =>
+                      farm.user.crops.map((crop) => crop.crop_type.name)
+                  )
+                : farms.user.crops.map((crop) => crop.crop_type.name)
+        )
+    );
+
     function calculateCenter(coords) {
         let totalLat = 0;
         let totalLng = 0;
@@ -68,29 +78,49 @@ export default function Map({ barangays, farms }) {
             click: (e) => {
                 const { lat, lng } = e.latlng;
 
-                farms.map((farm) => {
-                    const polygon = L.polygon(
-                        farm.zones.map((zone) => [
-                            zone.latitude,
-                            zone.longitude,
-                        ])
-                    );
-
-                    const isInside = polygon
-                        .getBounds()
-                        .contains(L.latLng(lat, lng));
-
-                    if (isInside) {
-                        setClickedFarm({
-                            farmer: farm.user ?? farm.precreated_user,
-                            coords: [lat, lng],
-                            polygon: farm.zones.map((zone) => [
+                user.role === "bmao" &&
+                    farms.map((farm) => {
+                        const polygon = L.polygon(
+                            farm.zones.map((zone) => [
                                 zone.latitude,
                                 zone.longitude,
-                            ]),
-                        });
-                    }
-                });
+                            ])
+                        );
+
+                        const isInside = polygon
+                            .getBounds()
+                            .contains(L.latLng(lat, lng));
+
+                        if (isInside) {
+                            setClickedFarm({
+                                farmer: farm.user ?? farm.precreated_user,
+                                coords: [lat, lng],
+                                polygon: farm.zones.map((zone) => [
+                                    zone.latitude,
+                                    zone.longitude,
+                                ]),
+                            });
+                        }
+                    });
+
+                const polygon = L.polygon(
+                    farms.zones.map((zone) => [zone.latitude, zone.longitude])
+                );
+
+                const isInside = polygon
+                    .getBounds()
+                    .contains(L.latLng(lat, lng));
+
+                if (isInside) {
+                    setClickedFarm({
+                        farmer: farms.user ?? farms.precreated_user,
+                        coords: [lat, lng],
+                        polygon: farms.zones.map((zone) => [
+                            zone.latitude,
+                            zone.longitude,
+                        ]),
+                    });
+                }
             },
         });
         return null;
@@ -242,6 +272,17 @@ export default function Map({ barangays, farms }) {
                                         </th>
                                         <td className="px-6 py-4">
                                             {clickedFarm.farmer.address}
+                                        </td>
+                                    </tr>
+                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                        <th
+                                            scope="row"
+                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                        >
+                                            Crops
+                                        </th>
+                                        <td className="px-6 py-4">
+                                            {cropTypeNames.join(", ")}
                                         </td>
                                     </tr>
                                     {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">

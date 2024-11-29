@@ -13,9 +13,6 @@ import "leaflet/dist/leaflet.css";
 import { Head, useForm } from "@inertiajs/react";
 import geoData from "@/Pages/geoData.json";
 import { useEffect, useState } from "react";
-import InputError from "@/Components/InputError";
-import { polygon } from "@turf/helpers";
-import area from "@turf/area";
 
 export default function Farms({ farm }) {
     const [center, setCenter] = useState({

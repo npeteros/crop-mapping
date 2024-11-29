@@ -27,7 +27,7 @@ export default function FarmerNavbar({ user }) {
 
                             <div
                                 id="userDropdown"
-                                className={`z-10 ${
+                                className={`z-50 ${
                                     profileDropdown
                                         ? "absolute top-12 right-0"
                                         : "hidden"
@@ -183,6 +183,18 @@ export default function FarmerNavbar({ user }) {
                                         </li>
                                     </ul>
                                 </div>
+                            </li>
+                            <li>
+                                <Link
+                                    href={route("crops.index")}
+                                    className={
+                                        route().current("crops.index")
+                                            ? "block py-2 px-3 text-white bg-secondary-dark rounded md:bg-transparent md:text-secondary-dark md:p-0 md:dark:text-secondary-light"
+                                            : "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-primary-dark md:p-0 md:dark:hover:text-secondary-light dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                                    }
+                                >
+                                    Crops
+                                </Link>
                             </li>
                             <li>
                                 <Link
