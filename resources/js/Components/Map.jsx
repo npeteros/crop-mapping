@@ -50,18 +50,17 @@ export default function Map({ barangays, farms }) {
         );
 
         return (
-            <>
+            <div className="flex gap-1">
                 {cropTypesArray.map((cropType) => (
                     <div
-                        className={`rounded-full shadow-md text-center w-fit px-4`}
-                        style={{ backgroundColor: "yellow" }}
+                        className={`rounded-full shadow-md text-center w-fit px-4 bg-neutral-400`}
                     >
-                        <span className="text-white font-semibold text-sm">
+                        <span className="text-black font-semibold text-xs">
                             {cropType}
                         </span>
                     </div>
                 ))}
-            </>
+            </div>
         );
     }
 
@@ -80,13 +79,17 @@ export default function Map({ barangays, farms }) {
         );
 
         return (
-            <>
+            <div className="flex gap-1">
                 {cropTypesArray.map((cropType) => (
-                    <span key={cropType} className="font-semibold text-xs">
-                        {cropType}
-                    </span>
+                    <div
+                        className={`rounded-full shadow-md text-center w-fit px-4 bg-neutral-400`}
+                    >
+                        <span className="text-black font-semibold text-xs">
+                            {cropType}
+                        </span>
+                    </div>
                 ))}
-            </>
+            </div>
         );
     }
 
