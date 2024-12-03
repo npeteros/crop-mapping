@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PrecreatedUser extends Model
@@ -21,7 +22,6 @@ class PrecreatedUser extends Model
         'rsba',
         'birthdate',
         'barangay_id',
-        'farm_id'
     ];
     
     protected $hidden = [
@@ -41,8 +41,8 @@ class PrecreatedUser extends Model
         return $this->belongsTo(Barangay::class);
     }
 
-    public function farm(): BelongsTo
+    public function farms(): HasMany
     {
-        return $this->belongsTo(Farm::class);
+        return $this->hasMany(Farm::class);
     }
 }

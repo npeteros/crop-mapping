@@ -39,10 +39,6 @@ class PrecreatedUserController extends Controller
             'barangayId' => 'required|exists:barangays,id',
             'password' => 'required',
         ]);
-        
-        $farm = Farm::create([
-            'color' => '#000000'
-        ]);
     
         $user = PrecreatedUser::create([
             'rsba' => $validated['rsba'],
@@ -52,10 +48,9 @@ class PrecreatedUserController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'barangay_id' => $validated['barangayId'],
-            'farm_id' => $farm->id
-        ]);        
+        ]);
     
-        return redirect(route('farms.create', ['precreated_user' => $user]));
+        return redirect(route('farms.create', ['user' => $user, 'user_type' => 'precreated']));
     }
 
     /**
@@ -87,7 +82,6 @@ class PrecreatedUserController extends Controller
      */
     public function destroy(PrecreatedUser $precreatedUser)
     {
-        $precreatedUser->farm()->delete();
         $precreatedUser->delete();
 
         return redirect(route('manage-accounts'));

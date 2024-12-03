@@ -191,7 +191,7 @@ export default function Farms({ farm }) {
                                             scope="row"
                                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                         >
-                                            Address
+                                            Purok/Sitio
                                         </th>
                                         <td className="px-6 py-4">
                                             {user.address}

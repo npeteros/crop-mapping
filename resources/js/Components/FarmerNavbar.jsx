@@ -29,87 +29,91 @@ export default function FarmerNavbar({ user }) {
             <div className="max-w-screen-xl mx-auto flex flex-col ">
                 <div className="flex flex-wrap items-center justify-between w-full p-4">
                     <ApplicationLogo className="h-10" />
-                    <div className="hidden sm:flex space-x-3 rtl:space-x-reverse">
-                        <NavLink
-                            href={route("home")}
-                            active={route().current("home")}
-                        >
-                            Home
-                        </NavLink>
-                        <NavLink
-                            href={route("maps")}
-                            active={route().current("maps")}
-                        >
-                            View Map
-                        </NavLink>
-                        <div className="relative">
-                            <button
-                                id="dropdownNavbarLink"
-                                data-dropdown-toggle="dropdownNavbar"
-                                className="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700 dark:text-gray-400 dark:hover:border-gray-700 dark:hover:text-gray-300 dark:focus:border-gray-700 dark:focus:text-gray-300"
-                                onClick={() =>
-                                    setResourcesDropdown(!resourcesDropdown)
-                                }
+                    {user && (
+                        <div className="hidden sm:flex space-x-3 rtl:space-x-reverse">
+                            <NavLink
+                                href={route("home")}
+                                active={route().current("home")}
                             >
-                                Resources{" "}
-                                <svg
-                                    className="size-2 ms-2.5"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 10 6"
-                                >
-                                    <path
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="m1 1 4 4 4-4"
-                                    />
-                                </svg>
-                            </button>
-                            <div
-                                id="dropdownNavbar"
-                                className={`z-10 ${
-                                    resourcesDropdown ? "absolute" : "hidden"
-                                } font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600`}
+                                Home
+                            </NavLink>
+                            <NavLink
+                                href={route("maps")}
+                                active={route().current("maps")}
                             >
-                                <ul
-                                    className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                                    aria-labelledby="dropdownLargeButton"
+                                View Map
+                            </NavLink>
+                            <div className="relative">
+                                <button
+                                    id="dropdownNavbarLink"
+                                    data-dropdown-toggle="dropdownNavbar"
+                                    className="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700 dark:text-gray-400 dark:hover:border-gray-700 dark:hover:text-gray-300 dark:focus:border-gray-700 dark:focus:text-gray-300"
+                                    onClick={() =>
+                                        setResourcesDropdown(!resourcesDropdown)
+                                    }
                                 >
-                                    <li>
-                                        <Link
-                                            href={route("resources.index")}
-                                            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                        >
-                                            View Resources
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            href={route("my-requests")}
-                                            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                        >
-                                            Request Status
-                                        </Link>
-                                    </li>
-                                </ul>
+                                    Resources{" "}
+                                    <svg
+                                        className="size-2 ms-2.5"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 10 6"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m1 1 4 4 4-4"
+                                        />
+                                    </svg>
+                                </button>
+                                <div
+                                    id="dropdownNavbar"
+                                    className={`z-10 ${
+                                        resourcesDropdown
+                                            ? "absolute"
+                                            : "hidden"
+                                    } font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600`}
+                                >
+                                    <ul
+                                        className="py-2 text-sm text-gray-700 dark:text-gray-200"
+                                        aria-labelledby="dropdownLargeButton"
+                                    >
+                                        <li>
+                                            <Link
+                                                href={route("resources.index")}
+                                                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                            >
+                                                View Resources
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                href={route("my-requests")}
+                                                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                            >
+                                                Request Status
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
+                            <NavLink
+                                href={route("crops.index")}
+                                active={route().current("crops.index")}
+                            >
+                                Crops
+                            </NavLink>
+                            <NavLink
+                                href={route("insurance.create")}
+                                active={route().current("insurance.create")}
+                            >
+                                Apply for Insurance
+                            </NavLink>
                         </div>
-                        <NavLink
-                            href={route("crops.index")}
-                            active={route().current("crops.index")}
-                        >
-                            Crops
-                        </NavLink>
-                        <NavLink
-                            href={route("insurance.create")}
-                            active={route().current("insurance.create")}
-                        >
-                            Apply for Insurance
-                        </NavLink>
-                    </div>
+                    )}
                     <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                         {user ? (
                             <div className="relative">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barangay;
 use App\Models\Farm;
 use App\Models\PrecreatedUser;
 use App\Models\User;
@@ -10,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Log;
 
 class FarmController extends Controller
 {
@@ -27,7 +29,9 @@ class FarmController extends Controller
     public function create(Request $request): Response
     {
         return Inertia::render('Farms/Create', [
-            'user' => $request->precreated_user ? PrecreatedUser::find($request->precreated_user)->load(['barangay']) : User::find($request->user)->load(['barangay']),
+            'user' => $request->user_type == 'precreated' ? PrecreatedUser::find($request->user)->load(['barangay']) : User::find($request->user)->load(['barangay']),
+            'user_type' => $request->user_type,
+            'barangays' => Barangay::all()
         ]);
     }
 
@@ -37,16 +41,26 @@ class FarmController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'user_id' => $request->userType == 'precreated' ? 'required|exists:precreated_users,id' : 'required|exists:users,id',
+            'userType' => 'required|in:precreated,user',
             'color' => 'required|string',
             'coords' => 'required|array|min:1',
             'coords.*.0' => 'required|numeric',
             'coords.*.1' => 'required|numeric',
         ]);
 
+        $farm = $validated['userType'] == 'precreated' ? Farm::create([
+            'precreated_user_id' => $validated['user_id'],
+            'color' => $validated['color']
+        ]) : Farm::create([
+                        'user_id' => $validated['user_id'],
+                        'color' => $validated['color']
+                    ]);
+
         foreach ($validated['coords'] as $coord) {
             Zone::create([
-                'farm_id' => $request->farmId,
-                'latitude' => $coord[0],
+                'farm_id' => $farm->id,
+                'latitude'  => $coord[0],
                 'longitude' => $coord[1],
             ]);
         }
@@ -59,6 +73,7 @@ class FarmController extends Controller
      */
     public function show(Farm $farm)
     {
+        Log::info($farm);
         return Inertia::render('Farms/Show', [
             'farm' => $farm->load(['user', 'user.barangay', 'precreatedUser', 'precreatedUser.barangay', 'zones']),
         ]);

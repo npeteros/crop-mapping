@@ -19,6 +19,7 @@ export default function Map({ barangays, farms }) {
         areaName: "",
         coords: [],
         total_farmers: 0,
+        barangay: {},
     });
     const [center, setCenter] = useState({
         areaName: "",
@@ -35,7 +36,7 @@ export default function Map({ barangays, farms }) {
             return ""; // Return an empty string if the user object or "crops" key is missing
         }
 
-        return Array.from(
+        const cropTypesArray = Array.from(
             new Set(
                 user.role === "bmao"
                     ? farms.flatMap(
@@ -46,7 +47,47 @@ export default function Map({ barangays, farms }) {
                       )
                     : user.crops.map((crop) => crop.crop_type.name)
             )
-        ).join(", ");
+        );
+
+        return (
+            <>
+                {cropTypesArray.map((cropType) => (
+                    <div
+                        className={`rounded-full shadow-md text-center w-fit px-4`}
+                        style={{ backgroundColor: "yellow" }}
+                    >
+                        <span className="text-white font-semibold text-sm">
+                            {cropType}
+                        </span>
+                    </div>
+                ))}
+            </>
+        );
+    }
+
+    function getCropTypeNamesForBarangay(barangay) {
+        if (!barangay.users) {
+            return ""; // Return an empty string if the user object or "crops" key is missing
+        }
+
+        const cropTypesArray = Array.from(
+            user.role === "farmer" &&
+                new Set(
+                    barangay.users.flatMap((user) =>
+                        user.crops.map((crop) => crop.crop_type.name)
+                    )
+                )
+        );
+
+        return (
+            <>
+                {cropTypesArray.map((cropType) => (
+                    <span key={cropType} className="font-semibold text-xs">
+                        {cropType}
+                    </span>
+                ))}
+            </>
+        );
     }
 
     function calculateCenter(coords) {
@@ -151,6 +192,7 @@ export default function Map({ barangays, farms }) {
                         coords: [lat, lng],
                         areaName: feature.properties.NAME_3,
                         total_farmers: clickedBarangay.users_count,
+                        barangay: clickedBarangay,
                     });
                 }
             }
@@ -193,6 +235,11 @@ export default function Map({ barangays, farms }) {
                         </span>
                         <br />
                         <span>Total Farmers: {clickedArea.total_farmers}</span>
+                        <br />
+                        <span>
+                            Crops:{" "}
+                            {getCropTypeNamesForBarangay(clickedArea.barangay)}
+                        </span>
                     </Popup>
                 )}
                 {farms &&
@@ -281,7 +328,7 @@ export default function Map({ barangays, farms }) {
                                             scope="row"
                                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                         >
-                                            Address
+                                            Purok/Sitio
                                         </th>
                                         <td className="px-6 py-4">
                                             {clickedFarm.farmer.address}

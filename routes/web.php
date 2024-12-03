@@ -15,6 +15,7 @@ use App\Http\Controllers\ZoneController;
 use App\Http\Middleware\AdminAccess;
 use App\Models\Barangay;
 use App\Models\Crop;
+use App\Models\CropType;
 use App\Models\Equipment;
 use App\Models\Farm;
 use App\Models\Fertilizer;
@@ -44,11 +45,13 @@ Route::get('/maps', function () {
     $farmId = auth()->user()->farm_id;
 
     return Inertia::render('Maps', [
-        'barangays' => Barangay::withCount([
-            'users as users_count' => function ($query) {
-                $query->where('role', 'farmer');
-            }
-        ])->get(),
+        'barangays' => Barangay::with([
+            'users.crops.cropType',
+        ])->withCount([
+                    'users as users_count' => function ($query) {
+                        $query->where('role', 'farmer');
+                    }
+                ])->get(),
         'farms' => auth()->user()->role === 'farmer' ? Farm::with([
             'zones',
             'user',
@@ -106,7 +109,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/manage-accounts', function () {
     return Inertia::render('ManageAccounts', [
-        'precreated' => PrecreatedUser::with(['barangay', 'farm'])->get(),
+        'precreated' => PrecreatedUser::with(['barangay', 'farms'])->get(),
         'users' => User::with(['barangay', 'crops'])->where('role', 'Farmer')->has('barangay')->get(),
         'barangays' => Barangay::all()
     ]);
@@ -142,25 +145,25 @@ Route::get('/manage-requests', function () {
 Route::get('my-requests', function () {
     return Inertia::render('Resources/MyRequests', [
         'requests' => ResourceRequest::with(['fertilizer', 'equipment', 'seed'])
-        ->where('user_id', auth()->user()->id)
-        ->get()
-        ->map(function ($request) {
-            $requestName = null;
+            ->where('user_id', auth()->user()->id)
+            ->get()
+            ->map(function ($request) {
+                $requestName = null;
 
-            if ($request->category === 'fertilizer' && $request->fertilizer) {
-                $requestName = $request->fertilizer->name;
-            } elseif ($request->category === 'equipment' && $request->equipment) {
-                $requestName = $request->equipment->name;
-            } elseif ($request->category === 'seed' && $request->seed) {
-                $requestName = $request->seed->name;
-            }
+                if ($request->category === 'fertilizer' && $request->fertilizer) {
+                    $requestName = $request->fertilizer->name;
+                } elseif ($request->category === 'equipment' && $request->equipment) {
+                    $requestName = $request->equipment->name;
+                } elseif ($request->category === 'seed' && $request->seed) {
+                    $requestName = $request->seed->name;
+                }
 
-            return [
-                'id' => $request->id,
-                'name' => $requestName,
-                'status' => ucfirst($request->status),
-            ];
-        })
+                return [
+                    'id' => $request->id,
+                    'name' => $requestName,
+                    'status' => ucfirst($request->status),
+                ];
+            })
     ]);
 })->middleware(['auth', 'verified'])->name('my-requests');
 

@@ -23,7 +23,6 @@ return new class extends Migration {
             $table->enum('role', ['bmao', 'farmer'])->default('farmer');
             $table->date('birthdate')->nullable();
             $table->foreignId('barangay_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('farm_id')->nullable()->unique()->constrained()->cascadeOnDelete();
             $table->string('address')->nullable();
             $table->boolean('approved')->default(false);
             $table->timestamps();

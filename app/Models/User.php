@@ -31,7 +31,6 @@ class User extends Authenticatable
         'rsba',
         'birthdate',
         'barangay_id',
-        'farm_id'
     ];
 
     /**
@@ -67,9 +66,9 @@ class User extends Authenticatable
         return $this->hasMany(Crop::class);
     }
 
-    public function farm(): HasOne
+    public function farms(): HasMany
     {
-        return $this->hasOne(Farm::class);
+        return $this->hasMany(Farm::class);
     }
 
     public function resourceRequests(): HasMany

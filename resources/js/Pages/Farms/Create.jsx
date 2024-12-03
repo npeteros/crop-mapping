@@ -17,7 +17,7 @@ import InputError from "@/Components/InputError";
 import { polygon } from "@turf/helpers";
 import area from "@turf/area";
 
-export default function Farms({ user }) {
+export default function Create({ user, user_type }) {
     const [center, setCenter] = useState({
         areaName: "",
         coords: [],
@@ -26,8 +26,8 @@ export default function Farms({ user }) {
     const { data, setData, post, processing, reset, errors } = useForm({
         color: "#000000",
         coords: [],
-        userId: user.id,
-        farmId: user.farm_id
+        user_id: user.id,
+        userType: user_type
     });
     const [drawnZones, setDrawnZones] = useState([]);
 

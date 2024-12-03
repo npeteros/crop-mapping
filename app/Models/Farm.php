@@ -15,17 +15,18 @@ class Farm extends Model
 
     protected $fillable = [
         'user_id',
+        'precreated_user_id',
         'color'
     ];
 
-    public function user(): HasOne
+    public function user(): BelongsTo
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function precreatedUser(): HasOne
+    public function precreatedUser(): BelongsTo
     {
-        return $this->hasOne(PrecreatedUser::class);
+        return $this->belongsTo(PrecreatedUser::class);
     }
 
     public function zones(): HasMany

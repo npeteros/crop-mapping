@@ -9,6 +9,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function Profiles({ precreated, users, barangays }) {
+    console.log(precreated);
     const { data, setData, post, processing, errors } = useForm({
         rsba: "",
         lastName: "",
@@ -518,7 +519,9 @@ export default function Profiles({ precreated, users, barangays }) {
                                                           href={route(
                                                               "farms.show",
                                                               {
-                                                                  farm: farmer.farm_id,
+                                                                  farm: farmer
+                                                                      .farms[0]
+                                                                      .id,
                                                               }
                                                           )}
                                                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -576,12 +579,14 @@ export default function Profiles({ precreated, users, barangays }) {
                                                       {farmer.email}
                                                   </td>
                                                   <td className="px-6 py-4">
-                                                      {farmer.farm_id && (
+                                                      {farmer.farms && (
                                                           <Link
                                                               href={route(
                                                                   "farms.show",
                                                                   {
-                                                                      farm: farmer.farm_id,
+                                                                      farm: farmer
+                                                                          .farms[0]
+                                                                          .id,
                                                                   }
                                                               )}
                                                               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
