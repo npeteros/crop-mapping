@@ -24,7 +24,7 @@ class ApprovedEmail extends Notification
      * Get the notification's delivery channels.
      *
      * @return array<int, string>
-     */
+     */asdsdsa
     public function via(object $notifiable): array
     {
         return ['mail'];
