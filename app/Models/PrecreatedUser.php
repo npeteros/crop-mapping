@@ -18,6 +18,7 @@ class PrecreatedUser extends Model
         'middle_name',
         'email',
         'password',
+        'unhashed_password',
         'address',
         'rsba',
         'birthdate',

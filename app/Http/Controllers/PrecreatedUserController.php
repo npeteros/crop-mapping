@@ -6,6 +6,7 @@ use App\Models\Farm;
 use App\Models\PrecreatedUser;
 use Hash;
 use Illuminate\Http\Request;
+use Log;
 
 class PrecreatedUserController extends Controller
 {
@@ -47,6 +48,7 @@ class PrecreatedUserController extends Controller
             'middle_name' => $validated['middleName'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'unhashed_password' => $validated['password'],
             'barangay_id' => $validated['barangayId'],
         ]);
     

@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\EmailApproved;
+use App\Events\UserApproved;
 use App\Http\Controllers\BarangayController;
 use App\Http\Controllers\CropController;
 use App\Http\Controllers\EquipmentController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\ResourceRequestController;
 use App\Http\Controllers\SeedController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Middleware\AdminAccess;
+use App\Mail\ApprovedUserEmail;
 use App\Models\Barangay;
 use App\Models\Crop;
 use App\Models\CropType;
@@ -175,12 +178,15 @@ Route::get('/farmer-registrations', function () {
 
 Route::post('/farmer-registrations', function (Request $request) {
     $validated = $request->validate([
-        'id' => 'required|exists:users,id',
+        'rsba' => 'required|exists:precreated_users,rsba',
     ]);
 
-    $user = User::find($validated['id']);
+    $precreatedUser = PrecreatedUser::where('rsba', $validated['rsba'])->first();
+    $user = User::where('rsba', $validated['rsba'])->first();
     $user->approved = '1';
     $user->save();
+
+    Mail::to($user->email)->send(new ApprovedUserEmail($precreatedUser));
 
     return redirect(route('farmer-registrations'));
 })->middleware(['auth', 'verified', AdminAccess::class])->name('farmer-registrations');

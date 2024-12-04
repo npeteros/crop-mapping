@@ -248,7 +248,7 @@ export default function Profiles({ users }) {
                                                     href={route(
                                                         "farmer-registrations",
                                                         {
-                                                            id: farmer.id,
+                                                            rsba: farmer.rsba,
                                                         }
                                                     )}
                                                     method="post"

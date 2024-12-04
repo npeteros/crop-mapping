@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('middle_name')->nullable();
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('unhashed_password');
             $table->date('birthdate')->nullable();
             $table->foreignId('barangay_id')->constrained()->cascadeOnDelete();
             $table->string('address')->nullable();
