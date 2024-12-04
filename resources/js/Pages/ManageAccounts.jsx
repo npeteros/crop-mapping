@@ -9,7 +9,6 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function Profiles({ precreated, users, barangays }) {
-    console.log(precreated);
     const { data, setData, post, processing, errors } = useForm({
         rsba: "",
         lastName: "",
@@ -515,19 +514,24 @@ export default function Profiles({ precreated, users, barangays }) {
                                                       {farmer.email}
                                                   </td>
                                                   <td className="px-6 py-4">
-                                                      <Link
-                                                          href={route(
-                                                              "farms.show",
-                                                              {
-                                                                  farm: farmer
-                                                                      .farms[0]
-                                                                      .id,
-                                                              }
-                                                          )}
-                                                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                                      >
-                                                          View
-                                                      </Link>
+                                                      {farmer.farms &&
+                                                      farmer.farms.length ? (
+                                                          <Link
+                                                              href={route(
+                                                                  "farms.show",
+                                                                  {
+                                                                      farm: farmer
+                                                                          .farms[0]
+                                                                          ?.id,
+                                                                  }
+                                                              )}
+                                                              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                                          >
+                                                              View
+                                                          </Link>
+                                                      ) : (
+                                                          ""
+                                                      )}
                                                   </td>
                                                   <td className="px-6 py-4">
                                                       Pending Registration
@@ -579,20 +583,23 @@ export default function Profiles({ precreated, users, barangays }) {
                                                       {farmer.email}
                                                   </td>
                                                   <td className="px-6 py-4">
-                                                      {farmer.farms && (
+                                                      {farmer.farms &&
+                                                      farmer.farms.length ? (
                                                           <Link
                                                               href={route(
                                                                   "farms.show",
                                                                   {
                                                                       farm: farmer
                                                                           .farms[0]
-                                                                          .id,
+                                                                          ?.id,
                                                                   }
                                                               )}
                                                               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                                                           >
                                                               View
                                                           </Link>
+                                                      ) : (
+                                                          ""
                                                       )}
                                                   </td>
                                                   <td className="py-4 grid grid-cols-4 gap-2 w-fit">

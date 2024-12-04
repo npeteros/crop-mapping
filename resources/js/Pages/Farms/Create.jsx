@@ -26,7 +26,7 @@ export default function Create({ user, user_type }) {
     const { data, setData, post, processing, reset, errors } = useForm({
         color: "#000000",
         coords: [],
-        user_id: user.id,
+        rsba: user.rsba,
         userType: user_type
     });
     const [drawnZones, setDrawnZones] = useState([]);

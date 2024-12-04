@@ -4,6 +4,7 @@ use App\Events\EmailApproved;
 use App\Events\UserApproved;
 use App\Http\Controllers\BarangayController;
 use App\Http\Controllers\CropController;
+use App\Http\Controllers\CropTypeController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FarmController;
 use App\Http\Controllers\FertilizerController;
@@ -45,7 +46,33 @@ Route::get('/profiles', function () {
 })->middleware(['auth', 'verified'])->name('profiles');
 
 Route::get('/maps', function () {
-    $farmId = auth()->user()->farm_id;
+    if (auth()->user()->role === 'farmer') {
+        $user = User::where('rsba', auth()->user()->rsba)->with([
+            'barangay',
+            'crops' => function ($query) {
+                $query->where('approved', 1);
+            },
+            'crops.cropType'
+        ])->first();
+        $farms = Farm::where('rsba', auth()->user()->rsba)
+            ->with([
+                'zones',
+            ]);
+
+        $farms->user = $user;
+
+        return Inertia::render('Maps', [
+            'barangays' => Barangay::with([
+                'users.crops.cropType',
+            ])->withCount([
+                        'users as users_count' => function ($query) {
+                            $query->where('role', 'farmer');
+                        }
+                    ])->get(),
+            'farms' => $farms->get(),
+        ]);
+    }
+
 
     return Inertia::render('Maps', [
         'barangays' => Barangay::with([
@@ -55,26 +82,19 @@ Route::get('/maps', function () {
                         $query->where('role', 'farmer');
                     }
                 ])->get(),
-        'farms' => auth()->user()->role === 'farmer' ? Farm::with([
+        'farms' => Farm::with([
             'zones',
             'user',
+            'precreatedUser',
             'user.barangay',
+            'precreatedUser.barangay',
             'user.crops' => function ($query) {
                 $query->where('approved', 1);
             },
             'user.crops.cropType'
-        ])->find($farmId) : Farm::with([
-                'zones',
-                'user',
-                'precreatedUser',
-                'user.barangay',
-                'precreatedUser.barangay',
-                'user.crops' => function ($query) {
-                    $query->where('approved', 1);
-                },
-                'user.crops.cropType'
-            ])->get(),
+        ])->get()
     ]);
+
 })->middleware(['auth', 'verified'])->name('maps');
 
 Route::resource('farms', FarmController::class)
@@ -86,6 +106,10 @@ Route::resource('zones', ZoneController::class)
     ->middleware(['auth', 'verified', AdminAccess::class]);
 
 Route::resource('crops', CropController::class)
+    ->only(['index', 'store', 'update', 'destroy'])
+    ->middleware(['auth', 'verified']);
+
+Route::resource('crop-types', CropTypeController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
@@ -111,8 +135,14 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified', AdminAccess::class])->name('dashboard');
 
 Route::get('/manage-accounts', function () {
+    $precreated = PrecreatedUser::with(['barangay'])->get();
+
+    $precreated->each(function ($user) {
+        $user->farms = Farm::where('rsba', $user->rsba)->get();
+    });
+
     return Inertia::render('ManageAccounts', [
-        'precreated' => PrecreatedUser::with(['barangay', 'farms'])->get(),
+        'precreated' => $precreated,
         'users' => User::with(['barangay', 'crops'])->where('role', 'Farmer')->has('barangay')->get(),
         'barangays' => Barangay::all()
     ]);
@@ -178,7 +208,7 @@ Route::get('/farmer-registrations', function () {
 
 Route::post('/farmer-registrations', function (Request $request) {
     $validated = $request->validate([
-        'rsba' => 'required|exists:precreated_users,rsba',
+        'rsba' => 'required|exists:users,rsba',
     ]);
 
     $precreatedUser = PrecreatedUser::where('rsba', $validated['rsba'])->first();
@@ -186,7 +216,7 @@ Route::post('/farmer-registrations', function (Request $request) {
     $user->approved = '1';
     $user->save();
 
-    Mail::to($user->email)->send(new ApprovedUserEmail($precreatedUser));
+    // Mail::to($user->email)->send(new ApprovedUserEmail($precreatedUser));
 
     return redirect(route('farmer-registrations'));
 })->middleware(['auth', 'verified', AdminAccess::class])->name('farmer-registrations');

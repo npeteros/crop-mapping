@@ -41,7 +41,7 @@ class FarmController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'user_id' => $request->userType == 'precreated' ? 'required|exists:precreated_users,id' : 'required|exists:users,id',
+            'rsba' => $request->userType == 'precreated' ? 'required|exists:precreated_users,rsba' : 'required|exists:users,rsba',
             'userType' => 'required|in:precreated,user',
             'color' => 'required|string',
             'coords' => 'required|array|min:1',
@@ -49,18 +49,15 @@ class FarmController extends Controller
             'coords.*.1' => 'required|numeric',
         ]);
 
-        $farm = $validated['userType'] == 'precreated' ? Farm::create([
-            'precreated_user_id' => $validated['user_id'],
+        $farm = Farm::create([
+            'rsba' => $validated['rsba'],
             'color' => $validated['color']
-        ]) : Farm::create([
-                        'user_id' => $validated['user_id'],
-                        'color' => $validated['color']
-                    ]);
+        ]);
 
         foreach ($validated['coords'] as $coord) {
             Zone::create([
                 'farm_id' => $farm->id,
-                'latitude'  => $coord[0],
+                'latitude' => $coord[0],
                 'longitude' => $coord[1],
             ]);
         }
@@ -73,9 +70,10 @@ class FarmController extends Controller
      */
     public function show(Farm $farm)
     {
-        Log::info($farm);
+        $user = PrecreatedUser::where('rsba', $farm->rsba)->first()->load(['barangay']) ?? User::where('rsba', $farm->rsba)->first()->load(['barangay']);
+        $farm->user = $user;
         return Inertia::render('Farms/Show', [
-            'farm' => $farm->load(['user', 'user.barangay', 'precreatedUser', 'precreatedUser.barangay', 'zones']),
+            'farm' => $farm->load(['zones']),
         ]);
     }
 

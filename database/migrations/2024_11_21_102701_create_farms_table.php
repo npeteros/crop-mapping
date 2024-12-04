@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('farms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('precreated_user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('rsba');
             $table->string('color');
             $table->timestamps();
         });

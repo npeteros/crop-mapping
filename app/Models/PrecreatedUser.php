@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class PrecreatedUser extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'last_name',
         'first_name',
@@ -24,12 +24,12 @@ class PrecreatedUser extends Model
         'birthdate',
         'barangay_id',
     ];
-    
+
     protected $hidden = [
         'password',
         'remember_token',
     ];
-    
+
     protected function casts(): array
     {
         return [
@@ -42,8 +42,13 @@ class PrecreatedUser extends Model
         return $this->belongsTo(Barangay::class);
     }
 
-    public function farms(): HasMany
+    public function farms()
     {
-        return $this->hasMany(Farm::class);
+        return $this->hasMany(Farm::class, 'rsba', 'rsba');
+    }
+
+    public function getFarmsAttribute()
+    {
+        return Farm::where('rsba', $this->rsba)->get();
     }
 }

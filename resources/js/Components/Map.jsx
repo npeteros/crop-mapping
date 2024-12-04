@@ -31,6 +31,8 @@ export default function Map({ barangays, farms }) {
         coords: [],
     });
 
+    console.log(farms);
+
     function getCropTypeNamesForUser(user) {
         if (!user || !user.crops) {
             return ""; // Return an empty string if the user object or "crops" key is missing
@@ -246,30 +248,17 @@ export default function Map({ barangays, farms }) {
                     </Popup>
                 )}
                 {farms &&
-                    (user.role === "farmer" ? (
+                    farms.map((farm) => (
                         <Polygon
-                            key={farms.id}
-                            positions={farms.zones.map((zone) => [
+                            key={farm.id}
+                            positions={farm.zones.map((zone) => [
                                 zone.latitude,
                                 zone.longitude,
                             ])}
-                            pathOptions={{ color: farms.color }}
+                            pathOptions={{ color: farm.color }}
                             fill={true}
-                            fillColor={farms.color}
+                            fillColor={farm.color}
                         />
-                    ) : (
-                        farms.map((farm) => (
-                            <Polygon
-                                key={farm.id}
-                                positions={farm.zones.map((zone) => [
-                                    zone.latitude,
-                                    zone.longitude,
-                                ])}
-                                pathOptions={{ color: farm.color }}
-                                fill={true}
-                                fillColor={farm.color}
-                            />
-                        ))
                     ))}
                 <GeoJSON data={geoData} onEachFeature={onEachFeature} />
                 <MoveMapToCenter center={center.coords} />

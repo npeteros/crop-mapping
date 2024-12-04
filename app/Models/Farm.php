@@ -14,23 +14,22 @@ class Farm extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'precreated_user_id',
+        'rsba',
         'color'
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function precreatedUser(): BelongsTo
-    {
-        return $this->belongsTo(PrecreatedUser::class);
-    }
 
     public function zones(): HasMany
     {
         return $this->hasMany(Zone::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'rsba', 'rsba');
+    }
+
+    public function precreatedUser()
+    {
+        return $this->belongsTo(PrecreatedUser::class, 'rsba', 'rsba');
     }
 }

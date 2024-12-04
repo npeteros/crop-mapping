@@ -66,9 +66,9 @@ class User extends Authenticatable
         return $this->hasMany(Crop::class);
     }
 
-    public function farms(): HasMany
+    public function farms()
     {
-        return $this->hasMany(Farm::class);
+        return $this->hasMany(Farm::class, 'rsba', 'rsba');
     }
 
     public function resourceRequests(): HasMany

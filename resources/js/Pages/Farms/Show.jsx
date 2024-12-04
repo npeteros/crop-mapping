@@ -15,6 +15,7 @@ import geoData from "@/Pages/geoData.json";
 import { useEffect, useState } from "react";
 
 export default function Farms({ farm }) {
+    console.log(farm)
     const [center, setCenter] = useState({
         areaName: "",
         coords: [],
