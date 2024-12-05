@@ -6,7 +6,6 @@ import ApproveInsurance from "./ApproveInsurance";
 import RejectInsurance from "./RejectInsurance";
 
 export default function Insurance({ insurances }) {
-    console.log(insurances);
     const [search, setSearch] = useState("");
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -110,7 +109,6 @@ export default function Insurance({ insurances }) {
     const { data, setData, patch, processing, reset, errors } = useForm({
         approved: false,
     });
-
     return (
         <AuthenticatedLayout>
             <Head title="Insurance" />
@@ -223,6 +221,7 @@ export default function Insurance({ insurances }) {
                             </thead>
                             <tbody>
                                 {shownInsurances
+                                    .filter((a) => tab == 0 ? a.approved == null : tab == 1 ? a.approved == true : a.approved == false)
                                     .slice(
                                         startIndex,
                                         startIndex + pagination.pageSize
@@ -253,9 +252,7 @@ export default function Insurance({ insurances }) {
                                                     >
                                                         Image
                                                     </a>
-                                                ) : (
-                                                    "11-23-2024"
-                                                )}
+                                                ) : formatDateToMMDDYYYY(insurance.created_at)}
                                             </td>
                                             <td className="px-6 py-4 flex items-center justify-center gap-1">
                                                 {tab == 0 ? (
@@ -293,9 +290,9 @@ export default function Insurance({ insurances }) {
                                                         />
                                                     </div>
                                                 ) : tab == 1 ? (
-                                                    "11-30-2024"
+                                                    formatDateToMMDDYYYY(insurance.updated_at)
                                                 ) : (
-                                                    "Image not clear"
+                                                    insurance.reason
                                                 )}
                                             </td>
                                         </tr>

@@ -16,9 +16,7 @@ export default function CropTypes({ farms, users, precreatedUsers }) {
         direction: "asc",
     });
 
-    const combinedUsers = [...users, ...precreatedUsers].filter(
-        (user, index, self) => index === self.findIndex((u) => u.id === user.id)
-    );
+    const combinedUsers = [...users, ...precreatedUsers];
 
     const startIndex = pagination.pageIndex * pagination.pageSize;
 
@@ -269,7 +267,7 @@ export default function CropTypes({ farms, users, precreatedUsers }) {
                                                 {/* <AdminEditCropType
                                                     farmType={farm}
                                                 />{" "} */}
-                                                /{" "}
+                                                {/* /{" "} */}
                                                 <Link
                                                     className="font-medium text-red-600 dark:text-red-500 hover:underline"
                                                     href={route(

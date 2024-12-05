@@ -46,32 +46,32 @@ Route::get('/profiles', function () {
 })->middleware(['auth', 'verified'])->name('profiles');
 
 Route::get('/maps', function () {
-    if (auth()->user()->role === 'farmer') {
-        $user = User::where('rsba', auth()->user()->rsba)->with([
-            'barangay',
-            'crops' => function ($query) {
-                $query->where('approved', 1);
-            },
-            'crops.cropType'
-        ])->first();
-        $farms = Farm::where('rsba', auth()->user()->rsba)
-            ->with([
-                'zones',
-            ]);
+    // if (auth()->user()->role === 'farmer') {
+    //     $user = User::where('rsba', auth()->user()->rsba)->with([
+    //         'barangay',
+    //         'crops' => function ($query) {
+    //             $query->where('approved', 1);
+    //         },
+    //         'crops.cropType'
+    //     ])->first();
+    //     $farms = Farm::where('rsba', auth()->user()->rsba)
+    //         ->with([
+    //             'zones',
+    //         ]);
 
-        $farms->user = $user;
+    //     $farms->user = $user;
 
-        return Inertia::render('Maps', [
-            'barangays' => Barangay::with([
-                'users.crops.cropType',
-            ])->withCount([
-                        'users as users_count' => function ($query) {
-                            $query->where('role', 'farmer');
-                        }
-                    ])->get(),
-            'farms' => $farms->get(),
-        ]);
-    }
+    //     return Inertia::render('Maps', [
+    //         'barangays' => Barangay::with([
+    //             'users.crops.cropType',
+    //         ])->withCount([
+    //                     'users as users_count' => function ($query) {
+    //                         $query->where('role', 'farmer');
+    //                     }
+    //                 ])->get(),
+    //         'farms' => $farms->get(),
+    //     ]);
+    // }
 
 
     return Inertia::render('Maps', [

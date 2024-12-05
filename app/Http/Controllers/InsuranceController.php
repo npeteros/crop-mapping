@@ -104,7 +104,9 @@ class InsuranceController extends Controller
      */
     public function show(Insurance $insurance)
     {
-        //
+        return Inertia::render('Insurance/Show', [
+            'insurance' => $insurance
+        ]);
     }
 
     /**
@@ -120,12 +122,24 @@ class InsuranceController extends Controller
      */
     public function update(Request $request, Insurance $insurance)
     {
-        $validated = $request->validate([
-            'approved' => 'required|boolean'
-        ]);
-
-        $insurance->approved = $validated['approved'];
-        $insurance->save();
+        if($request->approved == 1) {
+            $validated = $request->validate([
+                'approved' => 'required|boolean'
+            ]);
+    
+            $insurance->approved = $validated['approved'];
+            $insurance->save();
+        } else {
+            $validated = $request->validate([
+                'approved' => 'required|boolean',
+                'reason' => 'required|string'
+            ]);
+    
+            $insurance->approved = $validated['approved'];
+            $insurance->reason = $validated['reason'];
+            $insurance->save();
+        }
+        
 
         return redirect(route('insurance.index'));
     }

@@ -126,6 +126,8 @@ class FarmController extends Controller
      */
     public function destroy(Farm $farm)
     {
-        //
+        $farm->delete();
+
+        return redirect(route('farms.index'));
     }
 }

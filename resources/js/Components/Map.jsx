@@ -43,9 +43,8 @@ export default function Map({ barangays, farms }) {
                 user.role === "bmao"
                     ? farms.flatMap(
                           (farm) =>
-                              farm.user?.crops?.map(
-                                  (crop) => crop.crop_type
-                              ) || []
+                              farm.user?.crops?.map((crop) => crop.crop_type) ||
+                              []
                       )
                     : user.crops.map((crop) => crop.crop_type)
             )
@@ -76,14 +75,14 @@ export default function Map({ barangays, farms }) {
         }
 
         const cropTypesArray = Array.from(
-                new Set(
-                    barangay.users.flatMap((user) =>
-                        user.crops.map((crop) => crop.crop_type)
-                    )
+            new Set(
+                barangay.users.flatMap((user) =>
+                    user.crops.map((crop) => crop.crop_type)
                 )
+            )
         );
 
-        console.log(cropTypesArray)
+        console.log(cropTypesArray);
 
         return (
             <div className="flex gap-1">
@@ -142,33 +141,9 @@ export default function Map({ barangays, farms }) {
             click: (e) => {
                 const { lat, lng } = e.latlng;
 
-                if (user.role === "bmao") {
-                    farms.map((farm) => {
-                        const polygon = L.polygon(
-                            farm.zones.map((zone) => [
-                                zone.latitude,
-                                zone.longitude,
-                            ])
-                        );
-
-                        const isInside = polygon
-                            .getBounds()
-                            .contains(L.latLng(lat, lng));
-
-                        if (isInside) {
-                            setClickedFarm({
-                                farmer: farm.user ?? farm.precreated_user,
-                                coords: [lat, lng],
-                                polygon: farm.zones.map((zone) => [
-                                    zone.latitude,
-                                    zone.longitude,
-                                ]),
-                            });
-                        }
-                    });
-                } else {
+                farms.map((farm) => {
                     const polygon = L.polygon(
-                        farms.zones.map((zone) => [
+                        farm.zones.map((zone) => [
                             zone.latitude,
                             zone.longitude,
                         ])
@@ -180,15 +155,15 @@ export default function Map({ barangays, farms }) {
 
                     if (isInside) {
                         setClickedFarm({
-                            farmer: farms.user ?? farms.precreated_user,
+                            farmer: farm.user ?? farm.precreated_user,
                             coords: [lat, lng],
-                            polygon: farms.zones.map((zone) => [
+                            polygon: farm.zones.map((zone) => [
                                 zone.latitude,
                                 zone.longitude,
                             ]),
                         });
                     }
-                }
+                });
             },
         });
         return null;
@@ -279,7 +254,7 @@ export default function Map({ barangays, farms }) {
                                 <thead className="text-xs text-white uppercase bg-primary-light dark:bg-primary-light ">
                                     <tr>
                                         <th scope="col" className="px-6 py-3">
-                                            Owner's Info
+                                            Farm Info
                                         </th>
                                         <th
                                             scope="col"
@@ -288,53 +263,68 @@ export default function Map({ barangays, farms }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                        >
-                                            RSBA Number
-                                        </th>
-                                        <td className="px-6 py-4">
-                                            {clickedFarm.farmer.rsba}
-                                        </td>
-                                    </tr>
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                        >
-                                            Name
-                                        </th>
-                                        <td className="px-6 py-4">
-                                            {clickedFarm.farmer.last_name},{" "}
-                                            {clickedFarm.farmer.first_name}{" "}
-                                            {clickedFarm.farmer.middle_name ??
-                                                undefined}
-                                        </td>
-                                    </tr>
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                        >
-                                            Barangay
-                                        </th>
-                                        <td className="px-6 py-4">
-                                            {clickedFarm.farmer.barangay.name}
-                                        </td>
-                                    </tr>
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                        >
-                                            Purok/Sitio
-                                        </th>
-                                        <td className="px-6 py-4">
-                                            {clickedFarm.farmer.address}
-                                        </td>
-                                    </tr>
+                                    {(clickedFarm.farmer.id == user.id || user.role == "bmao") && (
+                                        <>
+                                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                <th
+                                                    scope="row"
+                                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                >
+                                                    RSBA Number
+                                                </th>
+                                                <td className="px-6 py-4">
+                                                    {clickedFarm.farmer.rsba}
+                                                </td>
+                                            </tr>
+                                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                <th
+                                                    scope="row"
+                                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                >
+                                                    Name
+                                                </th>
+                                                <td className="px-6 py-4">
+                                                    {
+                                                        clickedFarm.farmer
+                                                            .last_name
+                                                    }
+                                                    ,{" "}
+                                                    {
+                                                        clickedFarm.farmer
+                                                            .first_name
+                                                    }{" "}
+                                                    {clickedFarm.farmer
+                                                        .middle_name ??
+                                                        undefined}
+                                                </td>
+                                            </tr>
+                                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                <th
+                                                    scope="row"
+                                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                >
+                                                    Barangay
+                                                </th>
+                                                <td className="px-6 py-4">
+                                                    {
+                                                        clickedFarm.farmer
+                                                            .barangay.name
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                <th
+                                                    scope="row"
+                                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                >
+                                                    Purok/Sitio
+                                                </th>
+                                                <td className="px-6 py-4">
+                                                    {clickedFarm.farmer.address}
+                                                </td>
+                                            </tr>
+                                        </>
+                                    )}
                                     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                         <th
                                             scope="row"
