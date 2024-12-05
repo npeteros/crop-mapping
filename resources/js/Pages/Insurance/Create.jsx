@@ -1,4 +1,5 @@
 import FarmerNavbar from "@/Components/FarmerNavbar";
+import InputError from "@/Components/InputError";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
 
@@ -33,9 +34,21 @@ export default function Create() {
         beneficiaryAgeB: "",
         beneficiaryRelationshipB: "",
 
-        taxDeclaration: "",
-        farmImage: "",
+        farmImage: null,
     });
+    Object.keys(errors).forEach((key) => {
+        console.log(key, errors[key]); // Log key and its corresponding value
+    });
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route("insurance.store"), {
+            onSuccess: () => {
+                reset();
+            },
+        });
+    };
     return (
         <>
             <Head title="Apply for Insurance" />
@@ -128,9 +141,10 @@ export default function Create() {
                                     <span className="me-2 size-4 sm:size-6 text-xs sm:text-md flex justify-center items-center rounded-full border border-black">
                                         4
                                     </span>
-                                    Image{" "}
+                                    
+                                    Farm{" "}
                                     <span className="hidden sm:inline-flex sm:ms-1">
-                                        Chuchu
+                                        Image
                                     </span>
                                 </span>
                             </li>
@@ -218,8 +232,10 @@ export default function Create() {
                                             <option value="" disabled>
                                                 Select Gender
                                             </option>
-                                            <option value="m">Male</option>
-                                            <option value="f">Female</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">
+                                                Female
+                                            </option>
                                         </select>
                                     </div>
                                     <div />
@@ -328,12 +344,20 @@ export default function Create() {
                                         />
                                     </div>
                                 </div>
-                                <button
-                                    className="bg-blue-600 px-8 py-1 text-white rounded-full"
-                                    onClick={() => setPage(2)}
-                                >
-                                    Next
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className="bg-neutral-600 px-8 py-1 text-white rounded-full"
+                                        onClick={() => setPage(page - 1)}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        className="bg-blue-600 px-8 py-1 text-white rounded-full"
+                                        onClick={() => setPage(page + 1)}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -387,9 +411,10 @@ export default function Create() {
                                     <span className="me-2 size-4 sm:size-6 text-xs sm:text-md flex justify-center items-center rounded-full border border-black">
                                         4
                                     </span>
-                                    Image{" "}
+                                    
+                                    Farm{" "}
                                     <span className="hidden sm:inline-flex sm:ms-1">
-                                        Chuchu
+                                        Image
                                     </span>
                                 </span>
                             </li>
@@ -537,12 +562,21 @@ export default function Create() {
                                         />
                                     </div>
                                 </div>
-                                <button
-                                    className="bg-blue-600 px-8 py-1 text-white rounded-full"
-                                    onClick={() => setPage(3)}
-                                >
-                                    Next
-                                </button>
+
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className="bg-neutral-600 px-8 py-1 text-white rounded-full"
+                                        onClick={() => setPage(page - 1)}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        className="bg-blue-600 px-8 py-1 text-white rounded-full"
+                                        onClick={() => setPage(page + 1)}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -602,9 +636,10 @@ export default function Create() {
                                     <span className="me-2 size-4 sm:size-6 text-xs sm:text-md flex justify-center items-center rounded-full border border-black">
                                         4
                                     </span>
-                                    Image{" "}
+                                    
+                                    Farm{" "}
                                     <span className="hidden sm:inline-flex sm:ms-1">
-                                        Chuchu
+                                        Image
                                     </span>
                                 </span>
                             </li>
@@ -730,12 +765,20 @@ export default function Create() {
                                         </div>
                                     </div>
                                 </div>
-                                <button
-                                    className="bg-blue-600 px-8 py-1 text-white rounded-full"
-                                    onClick={() => setPage(4)}
-                                >
-                                    Next
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className="bg-neutral-600 px-8 py-1 text-white rounded-full"
+                                        onClick={() => setPage(page - 1)}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        className="bg-blue-600 px-8 py-1 text-white rounded-full"
+                                        onClick={() => setPage(page + 1)}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -801,9 +844,10 @@ export default function Create() {
                                     >
                                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                                     </svg>
-                                    Image{" "}
+                                    
+                                    Farm{" "}
                                     <span className="hidden sm:inline-flex sm:ms-1">
-                                        Chuchu
+                                        Image
                                     </span>
                                 </span>
                             </li>
@@ -813,46 +857,44 @@ export default function Create() {
                                 <span className="text-xl">
                                     Crop Information
                                 </span>
-                                <div className="flex flex-col gap-6 w-full px-0 lg:px-8">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="flex flex-col gap-2">
-                                            <label htmlFor="civilStatus">
-                                                Upload Tax Declaration Image
-                                            </label>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "taxDeclaration",
-                                                        e.target.files[0]
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <label htmlFor="civilStatus">
-                                                Upload Farm Image
-                                            </label>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "farmImage",
-                                                        e.target.files[0]
-                                                    )
-                                                }
-                                            />
-                                        </div>
+                                <div className="flex justify-center gap-6 w-full px-0 lg:px-8">
+                                    <div className="flex flex-col gap-2 items-center">
+                                        <label htmlFor="civilStatus">
+                                            Upload Farm Image
+                                        </label>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "farmImage",
+                                                    e.target.files[0]
+                                                )
+                                            }
+                                        />
                                     </div>
                                 </div>
-                                <button
-                                    className="bg-green-600 px-8 py-1 text-white rounded-full"
-                                    onClick={() => setPage(3)}
-                                >
-                                    Submit Application
-                                </button>
+                                <div className="px-0 lg:px-8 grid grid-cols-4 gap-2">
+                                    {Object.keys(errors).map((key) => (
+                                        <InputError
+                                            message={`${errors[key]}`}
+                                        />
+                                    ))}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className="bg-neutral-600 px-8 py-1 text-white rounded-full"
+                                        onClick={() => setPage(page - 1)}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        className="bg-green-600 px-8 py-1 text-white rounded-full"
+                                        onClick={submit}
+                                    >
+                                        Submit Application
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -76,4 +76,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ResourceRequest::class);
     }
+
+    public function insurances(): HasMany
+    {
+        return $this->hasMany(Insurance::class);
+    }
 }

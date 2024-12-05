@@ -1,9 +1,12 @@
 import NavLink from "@/Components/NavLink";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import ApproveInsurance from "./ApproveInsurance";
+import RejectInsurance from "./RejectInsurance";
 
-export default function Insurance({ farmers }) {
+export default function Insurance({ insurances }) {
+    console.log(insurances);
     const [search, setSearch] = useState("");
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -17,13 +20,13 @@ export default function Insurance({ farmers }) {
 
     const startIndex = pagination.pageIndex * pagination.pageSize;
 
-    const [shownFarmers, setShownFarmers] = useState(
-        farmers
+    const [shownInsurances, setShownInsurances] = useState(
+        insurances
             .sort((a, b) => a.last_name.localeCompare(b.last_name))
             .slice(startIndex, startIndex + pagination.pageSize)
     );
 
-    const totalPages = Math.ceil(shownFarmers.length / pagination.pageSize);
+    const totalPages = Math.ceil(shownInsurances.length / pagination.pageSize);
 
     const pageNumbers = [];
     for (let i = 0; i < totalPages; i++) {
@@ -58,50 +61,55 @@ export default function Insurance({ farmers }) {
     }
 
     useEffect(() => {
-        setShownFarmers(
-            farmers
-                .filter(
-                    (farmer) =>
-                        farmer.id == search ||
-                        // farmer.last_name
-                        //     .toLowerCase()
-                        //     .includes(search.toLowerCase()) ||
-                        farmer.birthdate
-                            .toLowerCase()
-                            .includes(search.toLowerCase()) ||
-                        farmer.barangay.name
-                            .toLowerCase()
-                            .includes(search.toLowerCase()) ||
-                        farmer.crops
-                            .map((crop) => crop.name.toLowerCase())
-                            .includes(search.toLowerCase())
-                )
+        setShownInsurances(
+            insurances
+                // .filter(
+                // (insurance) =>
+                // insurance.id == search
+                // ||
+                // insurance.last_name
+                //     .toLowerCase()
+                //     .includes(search.toLowerCase()) ||
+                // insurance.birthdate
+                //     .toLowerCase()
+                //     .includes(search.toLowerCase()) ||
+                // insurance.barangay.name
+                //     .toLowerCase()
+                //     .includes(search.toLowerCase()) ||
+                // insurance.crops
+                //     .map((crop) => crop.name.toLowerCase())
+                //     .includes(search.toLowerCase())
+                // )
                 .sort((a, b) => {
                     switch (sorting.field) {
                         case "id":
                             return sorting.direction === "asc"
                                 ? a.id - b.id
                                 : b.id - a.id;
-                        case "name":
-                            return sorting.direction === "asc"
-                                ? a.last_name.localeCompare(b.last_name)
-                                : b.last_name.localeCompare(a.last_name);
-                        case "birthdate":
-                            return sorting.direction === "asc"
-                                ? a.birthdate.localeCompare(b.birthdate)
-                                : b.birthdate.localeCompare(a.birthdate);
-                        case "barangay":
-                            return sorting.direction === "asc"
-                                ? a.barangay.name.localeCompare(b.barangay.name)
-                                : b.barangay.name.localeCompare(
-                                      a.barangay.name
-                                  );
+                        // case "name":
+                        //     return sorting.direction === "asc"
+                        //         ? a.last_name.localeCompare(b.last_name)
+                        //         : b.last_name.localeCompare(a.last_name);
+                        // case "birthdate":
+                        //     return sorting.direction === "asc"
+                        //         ? a.birthdate.localeCompare(b.birthdate)
+                        //         : b.birthdate.localeCompare(a.birthdate);
+                        // case "barangay":
+                        //     return sorting.direction === "asc"
+                        //         ? a.barangay.name.localeCompare(b.barangay.name)
+                        //         : b.barangay.name.localeCompare(
+                        //               a.barangay.name
+                        //           );
                     }
 
                     return 0;
                 })
         );
-    }, [pagination.pageIndex, farmers, sorting, search]);
+    }, [pagination.pageIndex, insurances, sorting, search]);
+
+    const { data, setData, patch, processing, reset, errors } = useForm({
+        approved: false,
+    });
 
     return (
         <AuthenticatedLayout>
@@ -152,12 +160,6 @@ export default function Insurance({ farmers }) {
                                 </button>
                             </li>
                         </ul>
-
-                        <NavLink>
-                            <button className="border-2 border-secondary-light text-secondary-light hover:bg-secondary-light hover:text-white px-12 py-2 rounded-lg">
-                                Print
-                            </button>
-                        </NavLink>
                     </div>
                     <div className="relative overflow-x-auto shadow-md">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -203,51 +205,6 @@ export default function Insurance({ farmers }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Birthdate
-                                            <button
-                                                onClick={() =>
-                                                    handleSort("birthdate")
-                                                }
-                                            >
-                                                <svg
-                                                    className="w-3 h-3 ms-1.5"
-                                                    aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        <div className="flex items-center">
-                                            Barangay
-                                            <button
-                                                onClick={() =>
-                                                    handleSort("barangay")
-                                                }
-                                            >
-                                                <svg
-                                                    className="w-3 h-3 ms-1.5"
-                                                    aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        <div className="flex items-center">
-                                            Types of Crops
-                                        </div>
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        <div className="flex items-center">
                                             {tab == 0
                                                 ? "Attachment"
                                                 : "Date Applied"}
@@ -265,62 +222,53 @@ export default function Insurance({ farmers }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {shownFarmers
+                                {shownInsurances
                                     .slice(
                                         startIndex,
                                         startIndex + pagination.pageSize
                                     )
-                                    .map((farmer) => (
+                                    .map((insurance) => (
                                         <tr
                                             className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                            key={farmer.id}
+                                            key={insurance.id}
                                         >
                                             <td className="px-6 py-4">
-                                                {farmer.id}
+                                                {insurance.id}
                                             </td>
                                             <th
                                                 scope="row"
                                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                             >
-                                                {farmer.last_name},{" "}
-                                                {farmer.first_name}{" "}
-                                                {farmer.middle_name ??
+                                                {insurance.last_name},{" "}
+                                                {insurance.first_name}{" "}
+                                                {insurance.middle_name ??
                                                     undefined}
                                             </th>
                                             <td className="px-6 py-4">
-                                                {formatDateToMMDDYYYY(
-                                                    farmer.birthdate
+                                                {tab == 0 ? (
+                                                    <a
+                                                        href={`/storage/${insurance.farm_image}`}
+                                                        target="_blank"
+                                                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                                    >
+                                                        Image
+                                                    </a>
+                                                ) : (
+                                                    "11-23-2024"
                                                 )}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {farmer.barangay.name}
-                                            </td>
-                                            <td className="py-4 grid grid-cols-4 gap-2 w-fit">
-                                                {farmer.crops &&
-                                                    farmer.crops.map((crop) => (
-                                                        <span
-                                                            key={crop.id}
-                                                            className={`w-12 flex justify-center text-xs leading-5 font-semibold rounded-full text-black`}
-                                                            style={{
-                                                                backgroundColor:
-                                                                    crop.color,
-                                                            }}
-                                                        >
-                                                            {crop.name}
-                                                        </span>
-                                                    ))}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {tab == 0
-                                                    ? "Image"
-                                                    : "11-23-2024"}
                                             </td>
                                             <td className="px-6 py-4 flex items-center justify-center gap-1">
                                                 {tab == 0 ? (
-                                                    <>
-                                                        <button
-                                                            href="#"
-                                                            className="font-medium flex gap-1 items-center text-emerald-500 hover:underline p-2 border-2 border-emerald-600 dark:border-emerald-500 hover:text-white hover:bg-emerald-600 dark:hover:bg-emerald-500 rounded-md"
+                                                    <div className="flex items-center gap-2">
+                                                        <Link
+                                                            as="button"
+                                                            href={route(
+                                                                "insurance.show",
+                                                                {
+                                                                    id: insurance.id,
+                                                                }
+                                                            )}
+                                                            className="font-medium flex gap-1 items-center text-blue-500 hover:underline p-2 border-2 border-blue-600 dark:border-blue-500 hover:text-white hover:bg-blue-600 dark:hover:bg-blue-500 rounded-md"
                                                         >
                                                             <svg
                                                                 width="16"
@@ -329,11 +277,21 @@ export default function Insurance({ farmers }) {
                                                                 viewBox="0 0 24 24"
                                                                 xmlns="http://www.w3.org/2000/svg"
                                                             >
-                                                                <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17Z"></path>
+                                                                <path d="M12 6.5a9.77 9.77 0 0 1 8.82 5.5A9.76 9.76 0 0 1 12 17.5 9.76 9.76 0 0 1 3.18 12 9.77 9.77 0 0 1 12 6.5Zm0-2C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Zm0 5a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 1 0-5Zm0-2c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5Z"></path>
                                                             </svg>
-                                                            Approve
-                                                        </button>
-                                                    </>
+                                                            View
+                                                        </Link>
+                                                        <ApproveInsurance
+                                                            insurance={
+                                                                insurance
+                                                            }
+                                                        />
+                                                        <RejectInsurance
+                                                            insurance={
+                                                                insurance
+                                                            }
+                                                        />
+                                                    </div>
                                                 ) : tab == 1 ? (
                                                     "11-30-2024"
                                                 ) : (
@@ -361,7 +319,7 @@ export default function Insurance({ farmers }) {
                                 </span>{" "}
                                 of{" "}
                                 <span className="font-semibold text-gray-900 dark:text-white">
-                                    {shownFarmers.length}
+                                    {shownInsurances.length}
                                 </span>
                             </span>
                             <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">

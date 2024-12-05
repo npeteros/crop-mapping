@@ -230,7 +230,7 @@ Route::resource('precreated-users', PrecreatedUserController::class)
     ->middleware(['auth', 'verified', AdminAccess::class]);
 
 Route::resource('insurance', InsuranceController::class)
-    ->only(['index', 'create', 'store', 'show'])
+    ->only(['index', 'create', 'store', 'show', 'update'])
     ->middleware(['auth', 'verified']);
 
 Route::resource('resources', ResourceController::class)
