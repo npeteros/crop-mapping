@@ -1,9 +1,12 @@
 import NavLink from "@/Components/NavLink";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import AdminEditCropType from "./AdminEditCropType";
+import InputError from "@/Components/InputError";
+import AddModal from "@/Components/AddModal";
 
-export default function Profiles({ crops }) {
+export default function CropTypes({ cropTypes }) {
     const [search, setSearch] = useState("");
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -17,7 +20,7 @@ export default function Profiles({ crops }) {
     const startIndex = pagination.pageIndex * pagination.pageSize;
 
     const [shownCrops, setShownCrops] = useState(
-        crops
+        cropTypes
             .sort((a, b) => a.id - b.id)
             .slice(startIndex, startIndex + pagination.pageSize)
     );
@@ -58,27 +61,14 @@ export default function Profiles({ crops }) {
 
     useEffect(() => {
         setShownCrops(
-            crops
+            cropTypes
                 .filter(
                     (crop) =>
                         crop.id.toString().includes(search) ||
-                        crop.user.last_name
+                        crop.name
                             .toLowerCase()
                             .includes(search.toLowerCase()) ||
-                        crop.user.first_name
-                            .toLowerCase()
-                            .includes(search.toLowerCase()) ||
-                        (crop.user.middle_name &&
-                            crop.user.middle_name
-                                .toLowerCase()
-                                .includes(search.toLowerCase())) ||
-                        crop.crop_type.name
-                            .toLowerCase()
-                            .includes(search.toLowerCase()) ||
-                        crop.planting_date
-                            .toLowerCase()
-                            .includes(search.toLowerCase()) ||
-                        crop.land_area.toString().includes(search)
+                        crop.color.toLowerCase().includes(search.toLowerCase())
                 )
                 .sort((a, b) => {
                     switch (sorting.field) {
@@ -86,51 +76,81 @@ export default function Profiles({ crops }) {
                             return sorting.direction === "asc"
                                 ? a.id - b.id
                                 : b.id - a.id;
-                        case "farmer":
+                        case "name":
                             return sorting.direction === "asc"
-                                ? a.user.last_name.localeCompare(
-                                      b.user.last_name
-                                  )
-                                : b.user.last_name.localeCompare(
-                                      a.user.last_name
-                                  );
-                        case "cropType":
+                                ? a.name.localeCompare(b.name)
+                                : b.name.localeCompare(a.name);
+                        case "color":
                             return sorting.direction === "asc"
-                                ? a.crop_type.name.localeCompare(
-                                      b.crop_type.name
-                                  )
-                                : b.crop_type.name.localeCompare(
-                                      a.crop_type.name
-                                  );
-                        case "plantingDate":
-                            return sorting.direction === "asc"
-                                ? a.planting_date.localeCompare(b.planting_date)
-                                : b.planting_date.localeCompare(
-                                      a.planting_date
-                                  );
-                        case "landArea":
-                            return sorting.direction === "asc"
-                                ? a.land_area - b.land_area
-                                : b.land_area - a.land_area;
+                                ? a.color.localeCompare(b.color)
+                                : b.color.localeCompare(a.color);
                     }
 
                     return 0;
                 })
         );
-    }, [pagination.pageIndex, crops, sorting, search]);
+    }, [pagination.pageIndex, cropTypes, sorting, search]);
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: "",
+        color: "",
+    });
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route("crop-types.store"), {
+            onSuccess: () => {
+                setShowModal(false);
+                reset();
+            },
+        });
+    };
 
     return (
         <AuthenticatedLayout>
-            <Head title="Crops" />
+            <Head title="Crop Types" />
 
             <div className="w-screen px-6 lg:px-8 py-12 gap-8 flex flex-col">
-                <input
-                    type="search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="rounded-full h-10 w-1/2 border-gray-400 ps-4"
-                    placeholder="Search..."
-                />
+                <div className="w-full flex justify-between items-center">
+                    <input
+                        type="search"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="rounded-full h-10 w-1/2 border-gray-400 ps-4"
+                        placeholder="Search..."
+                    />
+                    <AddModal
+                        title="Add New Crop Type"
+                        onSubmit={submit}
+                        processing={processing}
+                    >
+                        <div className="flex flex-col gap-1">
+                            <label htmlFor="name">Name: </label>
+                            <input
+                                type="text"
+                                value={data.name}
+                                onChange={(e) =>
+                                    setData("name", e.target.value)
+                                }
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                required
+                            />
+                            <InputError message={errors.name} />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <label htmlFor="name">Color: </label>
+                            <input
+                                type="color"
+                                value={data.color}
+                                onChange={(e) =>
+                                    setData("color", e.target.value)
+                                }
+                            />
+                            <InputError message={errors.color} />
+                        </div>
+                    </AddModal>
+                </div>
                 <div className="flex flex-col gap-2">
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -138,7 +158,7 @@ export default function Profiles({ crops }) {
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Crop ID
+                                            ID
                                             <button
                                                 onClick={() => handleSort("id")}
                                             >
@@ -156,10 +176,10 @@ export default function Profiles({ crops }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Farmer
+                                            Name
                                             <button
                                                 onClick={() =>
-                                                    handleSort("farmer")
+                                                    handleSort("name")
                                                 }
                                             >
                                                 <svg
@@ -176,10 +196,10 @@ export default function Profiles({ crops }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Crop Type
+                                            Color
                                             <button
                                                 onClick={() =>
-                                                    handleSort("cropType")
+                                                    handleSort("color")
                                                 }
                                             >
                                                 <svg
@@ -196,42 +216,7 @@ export default function Profiles({ crops }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center">
-                                            Planting Date
-                                            <button
-                                                onClick={() =>
-                                                    handleSort("plantingDate")
-                                                }
-                                            >
-                                                <svg
-                                                    className="w-3 h-3 ms-1.5"
-                                                    aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        <div className="flex items-center">
-                                            Land Area
-                                            <button
-                                                onClick={() =>
-                                                    handleSort("landArea")
-                                                }
-                                            >
-                                                <svg
-                                                    className="w-3 h-3 ms-1.5"
-                                                    aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                </svg>
-                                            </button>
+                                            Action
                                         </div>
                                     </th>
                                 </tr>
@@ -254,21 +239,29 @@ export default function Profiles({ crops }) {
                                                 scope="row"
                                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                             >
-                                                {crop.user.last_name},{" "}
-                                                {crop.user.first_name}{" "}
-                                                {crop.user.middle_name ??
-                                                    undefined}
+                                                {crop.name}
                                             </th>
-                                            <td className="px-6 py-4">
-                                                {crop.crop_type.name}
+                                            <td
+                                                className="px-6 py-4"
+                                                style={{ color: crop.color }}
+                                            >
+                                                {crop.color}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {formatDateToMMDDYYYY(
-                                                    crop.planting_date
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {crop.land_area}
+                                                <AdminEditCropType
+                                                    cropType={crop}
+                                                />{" "}
+                                                /{" "}
+                                                <Link
+                                                    className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                                                    href={route(
+                                                        "crop-types.destroy",
+                                                        crop.id
+                                                    )}
+                                                    method="delete"
+                                                >
+                                                    Delete
+                                                </Link>
                                             </td>
                                         </tr>
                                     ))}

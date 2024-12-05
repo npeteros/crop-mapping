@@ -75,7 +75,8 @@ class DatabaseSeeder extends Seeder
 
         foreach ($cropTypes as $cropType) {
             $newCropType = CropType::factory()->create([
-                'name' => $cropType
+                'name' => $cropType,
+                'color' => fake()->hexColor
             ]);
 
             // $user = User::factory()->create();

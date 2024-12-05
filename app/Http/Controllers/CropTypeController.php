@@ -4,15 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\CropType;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+use Log;
 
 class CropTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
-        //
+        return Inertia::render('CropTypes/Index', [
+            'cropTypes' => CropType::all(),
+        ]);
     }
 
     /**
@@ -28,7 +33,17 @@ class CropTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|unique:crop_types',
+            'color' => 'required|string',
+        ]);
+
+        CropType::create([
+            'name' => $validated['name'],
+            'color' => $validated['color'],
+        ]);
+
+        return redirect(route('crop-types.index'));
     }
 
     /**
@@ -52,7 +67,16 @@ class CropTypeController extends Controller
      */
     public function update(Request $request, CropType $cropType)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'color' => 'required|string',
+        ]);
+
+        $cropType->name = $validated['name'];
+        $cropType->color = $validated['color'];
+        $cropType->save();
+
+        return redirect(route('crop-types.index'));
     }
 
     /**
@@ -60,6 +84,8 @@ class CropTypeController extends Controller
      */
     public function destroy(CropType $cropType)
     {
-        //
+        $cropType->delete();
+
+        return redirect(route('crop-types.index'));
     }
 }

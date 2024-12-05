@@ -16,6 +16,10 @@ export default function AuthenticatedLayout({ header, children }) {
                 url: "crops.index",
             },
             {
+                name: "Crop Types",
+                url: "crop-types.index",
+            },
+            {
                 name: "Pending Crops",
                 url: "pending-crops",
             },

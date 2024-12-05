@@ -38,6 +38,8 @@ class CropController extends Controller
      */
     public function store(Request $request)
     {
+
+        Log::info($request->all());
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'crop_type_id' => 'required|exists:crop_types,id',

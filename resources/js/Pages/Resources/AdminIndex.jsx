@@ -180,7 +180,7 @@ export default function Insurance({ fertilizers, equipments, seeds }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Profiles" />
+            <Head title="Resources" />
 
             <div className="w-screen px-6 lg:px-8 py-12 gap-8 flex flex-col">
                 <input

@@ -12,7 +12,7 @@ export default function Maps({ barangays, farms }) {
         </AuthenticatedLayout>
     ) : (
         <>
-            <Head title="Welcome" />
+            <Head title="Maps" />
             <FarmerNavbar user={user} />
 
             <Map barangays={barangays} farms={farms} />

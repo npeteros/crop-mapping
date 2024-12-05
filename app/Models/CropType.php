@@ -12,6 +12,7 @@ class CropType extends Model
 
     protected $fillable = [
         'name',
+        'color'
     ];
 
     public function crops(): HasMany

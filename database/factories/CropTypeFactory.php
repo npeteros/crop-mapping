@@ -18,6 +18,7 @@ class CropTypeFactory extends Factory
     {
         return [
             'name' => fake()->word(),
+            'color' => fake()->hexColor(),
         ];
     }
 }

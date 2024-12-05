@@ -44,10 +44,10 @@ export default function Map({ barangays, farms }) {
                     ? farms.flatMap(
                           (farm) =>
                               farm.user?.crops?.map(
-                                  (crop) => crop.crop_type.name
+                                  (crop) => crop.crop_type
                               ) || []
                       )
-                    : user.crops.map((crop) => crop.crop_type.name)
+                    : user.crops.map((crop) => crop.crop_type)
             )
         );
 
@@ -55,10 +55,14 @@ export default function Map({ barangays, farms }) {
             <div className="flex gap-1">
                 {cropTypesArray.map((cropType) => (
                     <div
+                        key={cropType.id}
                         className={`rounded-full shadow-md text-center w-fit px-4 bg-neutral-400`}
+                        style={{
+                            backgroundColor: cropType.color,
+                        }}
                     >
                         <span className="text-black font-semibold text-xs">
-                            {cropType}
+                            {cropType.name}
                         </span>
                     </div>
                 ))}
@@ -72,22 +76,27 @@ export default function Map({ barangays, farms }) {
         }
 
         const cropTypesArray = Array.from(
-            user.role === "farmer" &&
                 new Set(
                     barangay.users.flatMap((user) =>
-                        user.crops.map((crop) => crop.crop_type.name)
+                        user.crops.map((crop) => crop.crop_type)
                     )
                 )
         );
+
+        console.log(cropTypesArray)
 
         return (
             <div className="flex gap-1">
                 {cropTypesArray.map((cropType) => (
                     <div
+                        key={cropType.id}
                         className={`rounded-full shadow-md text-center w-fit px-4 bg-neutral-400`}
+                        style={{
+                            backgroundColor: cropType.color,
+                        }}
                     >
                         <span className="text-black font-semibold text-xs">
-                            {cropType}
+                            {cropType.name}
                         </span>
                     </div>
                 ))}

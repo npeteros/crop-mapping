@@ -25,7 +25,10 @@ export default function AddModal({
                 onClose={() => setShowModal(false)}
                 maxWidth="2xl"
             >
-                <form className="p-8 flex flex-col gap-4" onSubmit={onSubmit}>
+                <form
+                    className="p-8 flex flex-col gap-4"
+                    onSubmit={onSubmit}
+                >
                     <span className="text-xl font-bold">{title}</span>
                     <div className="flex flex-col gap-4">{children}</div>
                     <div className="w-full flex justify-center gap-2">

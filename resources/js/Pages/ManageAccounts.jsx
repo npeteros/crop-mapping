@@ -191,7 +191,7 @@ export default function Profiles({ precreated, users, barangays }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Profiles" />
+            <Head title="Manage Accounts" />
             <div className="w-screen px-6 lg:px-8 py-12 gap-8 flex flex-col">
                 <input
                     type="search"
