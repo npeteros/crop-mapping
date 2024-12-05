@@ -1,9 +1,5 @@
 import AddModal from "@/Components/AddModal";
 import InputError from "@/Components/InputError";
-import Modal from "@/Components/Modal";
-import NavLink from "@/Components/NavLink";
-import PrimaryButton from "@/Components/PrimaryButton";
-import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
@@ -182,6 +178,36 @@ export default function Profiles({ precreated, users, barangays }) {
                 );
         }
     }, [pagination.pageIndex, users, sorting, search]);
+
+    function getCropTypeNamesForUser(user) {
+        if (!user || !user.crops) {
+            return ""; // Return an empty string if the user object or "crops" key is missing
+        }
+
+        const cropTypesArray = Array.from(
+            new Set(
+                user.crops.map((crop) => crop.crop_type)
+            )
+        );
+
+        return (
+            <div className="flex gap-1">
+                {cropTypesArray.map((cropType) => (
+                    <div
+                        key={cropType.id}
+                        className={`rounded-full shadow-md text-center w-fit px-4 bg-neutral-400`}
+                        style={{
+                            backgroundColor: cropType.color,
+                        }}
+                    >
+                        <span className="text-black font-semibold text-xs">
+                            {cropType.name}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        );
+    }
 
     const submit = (e) => {
         e.preventDefault();
@@ -443,11 +469,6 @@ export default function Profiles({ precreated, users, barangays }) {
                                             </button>
                                         </div>
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        <div className="flex items-center">
-                                            Land Assigned
-                                        </div>
-                                    </th>
                                     {tab == 0 ? (
                                         <th scope="col" className="px-6 py-3">
                                             <div className="flex items-center">
@@ -512,26 +533,6 @@ export default function Profiles({ precreated, users, barangays }) {
                                                   </td>
                                                   <td className="px-6 py-4">
                                                       {farmer.email}
-                                                  </td>
-                                                  <td className="px-6 py-4">
-                                                      {farmer.farms &&
-                                                      farmer.farms.length ? (
-                                                          <Link
-                                                              href={route(
-                                                                  "farms.show",
-                                                                  {
-                                                                      farm: farmer
-                                                                          .farms[0]
-                                                                          ?.id,
-                                                                  }
-                                                              )}
-                                                              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                                          >
-                                                              View
-                                                          </Link>
-                                                      ) : (
-                                                          ""
-                                                      )}
                                                   </td>
                                                   <td className="px-6 py-4">
                                                       Pending Registration
@@ -603,25 +604,9 @@ export default function Profiles({ precreated, users, barangays }) {
                                                       )}
                                                   </td>
                                                   <td className="py-4 grid grid-cols-4 gap-2 w-fit">
-                                                      {farmer.crops &&
-                                                          farmer.crops.map(
-                                                              (crop) => (
-                                                                  <span
-                                                                      key={
-                                                                          crop.id
-                                                                      }
-                                                                      className={`w-12 flex justify-center text-xs leading-5 font-semibold rounded-full text-black`}
-                                                                      style={{
-                                                                          backgroundColor:
-                                                                              crop.color,
-                                                                      }}
-                                                                  >
-                                                                      {
-                                                                          crop.name
-                                                                      }
-                                                                  </span>
-                                                              )
-                                                          )}
+                                                      {getCropTypeNamesForUser(
+                                                          farmer
+                                                      )}
                                                   </td>
                                                   <td className="px-6 py-4">
                                                       <Link className="font-medium text-blue-600 dark:text-blue-500 hover:underline">

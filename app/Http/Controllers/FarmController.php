@@ -7,6 +7,7 @@ use App\Models\Farm;
 use App\Models\PrecreatedUser;
 use App\Models\User;
 use App\Models\Zone;
+use DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,17 +21,35 @@ class FarmController extends Controller
      */
     public function index()
     {
+        $farms = Farm::with(['zones'])->get();
 
+        $farms->each(function ($farm) {
+            $farm->user = User::with([
+                'barangay',
+                'crops' => function ($query) {
+                    $query->where('approved', 1);
+                },
+                'crops.cropType'
+            ])->where('rsba', $farm->rsba)->first() ??
+                PrecreatedUser::with(['barangay'])->where('rsba', $farm->rsba)->first();
+        });
+
+        return Inertia::render('Farms/Index', [
+            'farms' => $farms,
+            'users' => User::where('role', 'farmer')->get(),
+            'precreatedUsers' => PrecreatedUser::all()
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request): Response
+    public function create(Request $request)
     {
+        $user = User::where('rsba', $request->user)->with('barangay')->first() ?? PrecreatedUser::where('rsba', $request->user)->with('barangay')->first();
+        Log::info('User: ' . $request->user);
         return Inertia::render('Farms/Create', [
-            'user' => $request->user_type == 'precreated' ? PrecreatedUser::find($request->user)->load(['barangay']) : User::find($request->user)->load(['barangay']),
-            'user_type' => $request->user_type,
+            'user' => $user,
             'barangays' => Barangay::all()
         ]);
     }
@@ -41,8 +60,17 @@ class FarmController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'rsba' => $request->userType == 'precreated' ? 'required|exists:precreated_users,rsba' : 'required|exists:users,rsba',
-            'userType' => 'required|in:precreated,user',
+            'rsba' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $existsInPrecreatedUsers = DB::table('precreated_users')->where('rsba', $value)->exists();
+                    $existsInUsers = DB::table('users')->where('rsba', $value)->exists();
+
+                    if (!$existsInPrecreatedUsers && !$existsInUsers) {
+                        $fail('The RSBA must exist in either the precreated_users or users table.');
+                    }
+                },
+            ],
             'color' => 'required|string',
             'coords' => 'required|array|min:1',
             'coords.*.0' => 'required|numeric',
@@ -62,7 +90,7 @@ class FarmController extends Controller
             ]);
         }
 
-        return redirect(route('manage-accounts'));
+        return redirect(route('farms.index'));
     }
 
     /**
@@ -70,7 +98,7 @@ class FarmController extends Controller
      */
     public function show(Farm $farm)
     {
-        $user = PrecreatedUser::where('rsba', $farm->rsba)->first()->load(['barangay']) ?? User::where('rsba', $farm->rsba)->first()->load(['barangay']);
+        $user = User::where('rsba', $farm->rsba)->with('barangay')->first() ?? PrecreatedUser::where('rsba', $farm->rsba)->with('barangay')->first();
         $farm->user = $user;
         return Inertia::render('Farms/Show', [
             'farm' => $farm->load(['zones']),

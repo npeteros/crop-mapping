@@ -26,6 +26,16 @@ export default function AuthenticatedLayout({ header, children }) {
         ]
     }
 
+    const farmsDropdown = {
+        title: "Farms",
+        links: [
+            {
+                name: "Farm List",
+                url: "farms.index",
+            },
+        ]
+    }
+
     const resourcesDropdown = {
         title: "Resources",
         links: [
@@ -89,6 +99,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Maps
                                 </NavLink>
                                 <DropdownNav routes={cropsDropdown} />
+                                {/* <DropdownNav routes={farmsDropdown} /> */}
+                                <NavLink
+                                    href={route("farms.index")}
+                                    active={route().current("farms.index")}
+                                >
+                                    Farms
+                                </NavLink>
                                 <NavLink
                                     href={route("insurance.index")}
                                     active={route().current("insurance.index")}

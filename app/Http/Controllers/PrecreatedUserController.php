@@ -52,7 +52,7 @@ class PrecreatedUserController extends Controller
             'barangay_id' => $validated['barangayId'],
         ]);
     
-        return redirect(route('farms.create', ['user' => $user, 'user_type' => 'precreated']));
+        return redirect(route('farms.create', ['user' => $user->rsba]));
     }
 
     /**

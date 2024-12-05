@@ -97,10 +97,6 @@ Route::get('/maps', function () {
 
 })->middleware(['auth', 'verified'])->name('maps');
 
-Route::resource('farms', FarmController::class)
-    ->only(['store', 'create', 'show'])
-    ->middleware(['auth', 'verified', AdminAccess::class]);
-
 Route::resource('zones', ZoneController::class)
     ->only(['store'])
     ->middleware(['auth', 'verified', AdminAccess::class]);
@@ -143,7 +139,13 @@ Route::get('/manage-accounts', function () {
 
     return Inertia::render('ManageAccounts', [
         'precreated' => $precreated,
-        'users' => User::with(['barangay', 'crops'])->where('role', 'Farmer')->has('barangay')->get(),
+        'users' => User::with([
+            'barangay',
+            'crops' => function ($query) {
+                $query->where('approved', 1);
+            },
+            'crops.cropType'
+        ])->where('role', 'Farmer')->has('barangay')->get(),
         'barangays' => Barangay::all()
     ]);
 })->middleware(['auth', 'verified', AdminAccess::class])->name('manage-accounts');
@@ -216,7 +218,9 @@ Route::post('/farmer-registrations', function (Request $request) {
     $user->approved = '1';
     $user->save();
 
-    // Mail::to($user->email)->send(new ApprovedUserEmail($precreatedUser));
+    Mail::to($user->contact_email)->send(new ApprovedUserEmail($precreatedUser));
+
+    $precreatedUser->delete();
 
     return redirect(route('farmer-registrations'));
 })->middleware(['auth', 'verified', AdminAccess::class])->name('farmer-registrations');
@@ -242,10 +246,12 @@ Route::resource('equipments', EquipmentController::class)
 Route::resource('seeds', SeedController::class)
     ->only(['update', 'destroy'])
     ->middleware(['auth', 'verified', AdminAccess::class]);
-
 Route::resource('resource-requests', ResourceRequestController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
+Route::resource('farms', FarmController::class)
+    ->only(['index', 'store', 'create', 'show', 'destroy'])
+    ->middleware(['auth', 'verified', AdminAccess::class]);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

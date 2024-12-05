@@ -31,6 +31,7 @@ class User extends Authenticatable
         'rsba',
         'birthdate',
         'barangay_id',
+        'contact_email'
     ];
 
     /**

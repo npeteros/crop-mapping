@@ -32,4 +32,9 @@ class Farm extends Model
     {
         return $this->belongsTo(PrecreatedUser::class, 'rsba', 'rsba');
     }
+    
+    protected function getOwner()
+    {
+        return $this->user ?? $this->precreatedUser;
+    }
 }

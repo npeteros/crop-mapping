@@ -60,10 +60,9 @@ class RegisteredUserController extends Controller
             'farm_id',
             'address'
         ]));
+        $user->contact_email = $validated['email'];
         $user->birthdate = $validated['birthdate'];
         $user->save();
-
-        $precreatedUser->delete();
 
         event(new Registered($user));
 
