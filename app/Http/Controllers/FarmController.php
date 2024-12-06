@@ -71,11 +71,17 @@ class FarmController extends Controller
                     }
                 },
             ],
+            'sitio' => 'required|string',
             'color' => 'required|string',
             'coords' => 'required|array|min:1',
             'coords.*.0' => 'required|numeric',
             'coords.*.1' => 'required|numeric',
         ]);
+
+        $user = User::where('rsba', $validated['rsba'])->first() ?? PrecreatedUser::where('rsba', $validated['rsba'])->first();
+
+        $user->address = $validated['sitio'];
+        $user->save();
 
         $farm = Farm::create([
             'rsba' => $validated['rsba'],

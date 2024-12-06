@@ -283,11 +283,6 @@ export default function Insurance({ insurances }) {
                                                                 insurance
                                                             }
                                                         />
-                                                        <RejectInsurance
-                                                            insurance={
-                                                                insurance
-                                                            }
-                                                        />
                                                     </div>
                                                 ) : tab == 1 ? (
                                                     formatDateToMMDDYYYY(insurance.updated_at)

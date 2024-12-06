@@ -39,7 +39,8 @@ return new class extends Migration
             $table->string('beneficiary_relationship_b');
             $table->string('farm_image');
             $table->boolean('approved')->nullable();
-            $table->string('reason')->nullable();
+            $table->date('schedule_date')->nullable();
+            $table->string('schedule_time')->nullable();
             $table->timestamps();
         });
     }

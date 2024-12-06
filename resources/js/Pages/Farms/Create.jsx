@@ -14,11 +14,9 @@ import { Head, useForm } from "@inertiajs/react";
 import geoData from "@/Pages/geoData.json";
 import { useEffect, useState } from "react";
 import InputError from "@/Components/InputError";
-import { polygon } from "@turf/helpers";
-import area from "@turf/area";
 
 export default function Create({ user }) {
-    console.log(user)
+    console.log(user);
     const [center, setCenter] = useState({
         areaName: "",
         coords: [],
@@ -26,8 +24,9 @@ export default function Create({ user }) {
     const [drawing, setDrawing] = useState(false);
     const { data, setData, post, processing, reset, errors } = useForm({
         color: "#000000",
+        sitio: user.address ?? "",
         coords: [],
-        rsba: user.rsba
+        rsba: user.rsba,
     });
     const [drawnZones, setDrawnZones] = useState([]);
 
@@ -168,6 +167,26 @@ export default function Create({ user }) {
                                 </div>
                                 <InputError
                                     message={errors.color}
+                                    className="mt-2"
+                                />
+                                <div className="flex items-center gap-2">
+                                    <label
+                                        htmlFor="sitio"
+                                        className="font-medium"
+                                    >
+                                        Farmer's Purok/Sitio:{" "}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        // className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        onChange={(e) =>
+                                            setData("sitio", e.target.value)
+                                        }
+                                        value={data.sitio}
+                                    />
+                                </div>
+                                <InputError
+                                    message={errors.sitio}
                                     className="mt-2"
                                 />
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InterviewScheduleDetails;
 use App\Models\Barangay;
 use App\Models\Insurance;
 use App\Models\User;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Log;
+use Mail;
 
 class InsuranceController extends Controller
 {
@@ -63,7 +65,7 @@ class InsuranceController extends Controller
             'farmImage' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        if($request->hasFile('farmImage')) {
+        if ($request->hasFile('farmImage')) {
             $image = $request->file('farmImage');
             $path = $image->store('images', 'public');
 
@@ -85,7 +87,7 @@ class InsuranceController extends Controller
                 'harvest_date' => $validated['harvestDate'],
                 'cultivation_area' => $validated['cultivationArea'],
                 'coverage_type' => $validated['coverageType'],
-                'sum_insured' => $validated['sumInsured'],                
+                'sum_insured' => $validated['sumInsured'],
                 'beneficiary_name_a' => $validated['beneficiaryNameA'],
                 'beneficiary_age_a' => $validated['beneficiaryAgeA'],
                 'beneficiary_relationship_a' => $validated['beneficiaryRelationshipA'],
@@ -122,24 +124,26 @@ class InsuranceController extends Controller
      */
     public function update(Request $request, Insurance $insurance)
     {
-        if($request->approved == 1) {
-            $validated = $request->validate([
-                'approved' => 'required|boolean'
-            ]);
-    
-            $insurance->approved = $validated['approved'];
-            $insurance->save();
-        } else {
-            $validated = $request->validate([
-                'approved' => 'required|boolean',
-                'reason' => 'required|string'
-            ]);
-    
-            $insurance->approved = $validated['approved'];
-            $insurance->reason = $validated['reason'];
-            $insurance->save();
-        }
-        
+        $validated = $request->validate([
+            'userId' => 'required|exists:users,id',
+            'approved' => 'required|boolean',
+            'scheduleDate' => 'required|date|after:today',
+            'scheduleTime' => [
+                'required',
+                'date_format:H:i',
+                'after_or_equal:08:00',
+            ],
+        ]);
+
+        $user = User::find($validated['userId']);
+
+        $insurance->approved = $validated['approved'];
+        $insurance->schedule_date = $validated['scheduleDate'];
+        $insurance->schedule_time = $validated['scheduleTime'];
+        $insurance->save();
+
+
+        Mail::to($user->contact_email)->send(new InterviewScheduleDetails($user, $insurance->schedule_date, $insurance->schedule_time));
 
         return redirect(route('insurance.index'));
     }

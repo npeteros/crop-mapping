@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\PrecreatedUser;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,16 +9,15 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Log;
 
-class ApprovedUserEmail extends Mailable
+class InterviewScheduleDetails extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public PrecreatedUser $user)
+    public function __construct(public User $user, public string $scheduleDate, public string $scheduleTime)
     {
         //
     }
@@ -30,7 +28,7 @@ class ApprovedUserEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Approved BMAO Account',
+            subject: 'Crop Insurance Interview Schedule Details',
         );
     }
 
@@ -40,10 +38,11 @@ class ApprovedUserEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.account_approved',
+            view: 'emails.interview_schedule_details',
             with: [
-                'user' => $this->user,
-                'loginUrl' => route('login')
+                'farmerName' => $this->user->first_name . ' ' . $this->user->last_name,
+                'scheduleDate' => $this->scheduleDate,
+                'scheduleTime' => $this->scheduleTime
             ]
         );
     }

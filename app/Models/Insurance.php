@@ -37,7 +37,8 @@ class Insurance extends Model
         'beneficiary_relationship_b',
         'farm_image',
         'approved',
-        'reason'
+        'schedule_date',
+        'schedule_time',
     ];
 
     public function user(): BelongsTo

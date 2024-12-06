@@ -141,7 +141,6 @@ export default function Create() {
                                     <span className="me-2 size-4 sm:size-6 text-xs sm:text-md flex justify-center items-center rounded-full border border-black">
                                         4
                                     </span>
-                                    
                                     Farm{" "}
                                     <span className="hidden sm:inline-flex sm:ms-1">
                                         Image
@@ -411,7 +410,6 @@ export default function Create() {
                                     <span className="me-2 size-4 sm:size-6 text-xs sm:text-md flex justify-center items-center rounded-full border border-black">
                                         4
                                     </span>
-                                    
                                     Farm{" "}
                                     <span className="hidden sm:inline-flex sm:ms-1">
                                         Image
@@ -636,7 +634,6 @@ export default function Create() {
                                     <span className="me-2 size-4 sm:size-6 text-xs sm:text-md flex justify-center items-center rounded-full border border-black">
                                         4
                                     </span>
-                                    
                                     Farm{" "}
                                     <span className="hidden sm:inline-flex sm:ms-1">
                                         Image
@@ -646,9 +643,7 @@ export default function Create() {
                         </ol>
                         <div className="bg-white rounded-2xl mt-2 px-8 lg:px-0">
                             <div className="w-full flex flex-col items-center gap-4 py-2">
-                                <span className="text-xl">
-                                    Crop Information
-                                </span>
+                                <span className="text-xl">Beneficiaries</span>
                                 <div className="flex flex-col gap-6 w-full px-0 lg:px-8">
                                     <div className="flex flex-col gap-2">
                                         <span>(a) Primary</span>
@@ -844,7 +839,6 @@ export default function Create() {
                                     >
                                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                                     </svg>
-                                    
                                     Farm{" "}
                                     <span className="hidden sm:inline-flex sm:ms-1">
                                         Image
@@ -854,46 +848,52 @@ export default function Create() {
                         </ol>
                         <div className="bg-white rounded-2xl mt-2 px-8 lg:px-0">
                             <div className="w-full flex flex-col items-center gap-4 py-2">
-                                <span className="text-xl">
-                                    Crop Information
-                                </span>
-                                <div className="flex justify-center gap-6 w-full px-0 lg:px-8">
-                                    <div className="flex flex-col gap-2 items-center">
-                                        <label htmlFor="civilStatus">
-                                            Upload Farm Image
-                                        </label>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) =>
-                                                setData(
-                                                    "farmImage",
-                                                    e.target.files[0]
-                                                )
-                                            }
-                                        />
+                                <span className="text-xl">Farm Image</span>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex justify-center gap-6 w-full px-0 lg:px-8">
+                                        <div className="flex flex-col gap-2 items-center">
+                                            <label htmlFor="civilStatus">
+                                                Upload Farm Image
+                                            </label>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "farmImage",
+                                                        e.target.files[0]
+                                                    )
+                                                }
+                                            />
+                                            <span className="text-red-600 font-medium text-sm">
+                                                Please upload clear images to
+                                                ensure the best quality.
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="px-0 lg:px-8 grid grid-cols-4 gap-2">
-                                    {Object.keys(errors).map((key) => (
-                                        <InputError
-                                            message={`${errors[key]}`}
-                                        />
-                                    ))}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        className="bg-neutral-600 px-8 py-1 text-white rounded-full"
-                                        onClick={() => setPage(page - 1)}
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        className="bg-green-600 px-8 py-1 text-white rounded-full"
-                                        onClick={submit}
-                                    >
-                                        Submit Application
-                                    </button>
+                                    {errors && (
+                                        <div className="px-0 lg:px-8 grid grid-cols-4 gap-2">
+                                            {Object.keys(errors).map((key) => (
+                                                <InputError
+                                                    message={`${errors[key]}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                    <div className="flex items-center justify-center gap-2">
+                                        <button
+                                            className="bg-neutral-600 px-8 py-1 text-white rounded-full"
+                                            onClick={() => setPage(page - 1)}
+                                        >
+                                            Previous
+                                        </button>
+                                        <button
+                                            className="bg-green-600 px-8 py-1 text-white rounded-full"
+                                            onClick={submit}
+                                        >
+                                            Submit Application
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
