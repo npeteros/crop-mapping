@@ -40,7 +40,7 @@ export default function ApproveRequest(request) {
                 maxWidth="2xl"
             >
                 <form className="p-8 flex flex-col gap-4" onSubmit={submit}>
-                    <span className="text-xl font-bold">Approve Insurance</span>
+                    <span className="text-xl font-bold">Approve Resource</span>
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-1">
                             <label htmlFor="name">Delivery Date: </label>

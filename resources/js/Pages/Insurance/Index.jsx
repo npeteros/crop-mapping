@@ -210,18 +210,22 @@ export default function Insurance({ insurances }) {
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <div className="flex items-center justify-center">
-                                            {tab == 0
-                                                ? "Action"
-                                                : tab == 1
-                                                ? "Date Approved"
-                                                : "Reason"}
+                                            {tab == 2
+                                                ? "Reason"
+                                                : "Action"}
                                         </div>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {shownInsurances
-                                    .filter((a) => tab == 0 ? a.approved == null : tab == 1 ? a.approved == true : a.approved == false)
+                                    .filter((a) =>
+                                        tab == 0
+                                            ? a.approved == null
+                                            : tab == 1
+                                            ? a.approved == true
+                                            : a.approved == false
+                                    )
                                     .slice(
                                         startIndex,
                                         startIndex + pagination.pageSize
@@ -252,19 +256,18 @@ export default function Insurance({ insurances }) {
                                                     >
                                                         Image
                                                     </a>
-                                                ) : formatDateToMMDDYYYY(insurance.created_at)}
+                                                ) : (
+                                                    formatDateToMMDDYYYY(
+                                                        insurance.created_at
+                                                    )
+                                                )}
                                             </td>
                                             <td className="px-6 py-4 flex items-center justify-center gap-1">
                                                 {tab == 0 ? (
                                                     <div className="flex items-center gap-2">
-                                                        <Link
-                                                            as="button"
-                                                            href={route(
-                                                                "insurance.show",
-                                                                {
-                                                                    id: insurance.id,
-                                                                }
-                                                            )}
+                                                        <a
+                                                            href={`/storage/${insurance.application_pdf}`}
+                                                            target="_blank"
                                                             className="font-medium flex gap-1 items-center text-blue-500 hover:underline p-2 border-2 border-blue-600 dark:border-blue-500 hover:text-white hover:bg-blue-600 dark:hover:bg-blue-500 rounded-md"
                                                         >
                                                             <svg
@@ -277,7 +280,7 @@ export default function Insurance({ insurances }) {
                                                                 <path d="M12 6.5a9.77 9.77 0 0 1 8.82 5.5A9.76 9.76 0 0 1 12 17.5 9.76 9.76 0 0 1 3.18 12 9.77 9.77 0 0 1 12 6.5Zm0-2C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Zm0 5a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 1 0-5Zm0-2c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5Z"></path>
                                                             </svg>
                                                             View
-                                                        </Link>
+                                                        </a>
                                                         <ApproveInsurance
                                                             insurance={
                                                                 insurance
@@ -285,7 +288,22 @@ export default function Insurance({ insurances }) {
                                                         />
                                                     </div>
                                                 ) : tab == 1 ? (
-                                                    formatDateToMMDDYYYY(insurance.updated_at)
+                                                    <a
+                                                        href={`/storage/${insurance.application_pdf}`}
+                                                        target="_blank"
+                                                        className="font-medium flex gap-1 items-center text-blue-500 hover:underline p-2 border-2 border-blue-600 dark:border-blue-500 hover:text-white hover:bg-blue-600 dark:hover:bg-blue-500 rounded-md"
+                                                    >
+                                                        <svg
+                                                            width="16"
+                                                            height="16"
+                                                            fill="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path d="M12 6.5a9.77 9.77 0 0 1 8.82 5.5A9.76 9.76 0 0 1 12 17.5 9.76 9.76 0 0 1 3.18 12 9.77 9.77 0 0 1 12 6.5Zm0-2C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Zm0 5a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 1 0-5Zm0-2c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5Z"></path>
+                                                        </svg>
+                                                        Print
+                                                    </a>
                                                 ) : (
                                                     insurance.reason
                                                 )}

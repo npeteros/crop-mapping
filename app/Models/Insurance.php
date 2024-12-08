@@ -39,6 +39,7 @@ class Insurance extends Model
         'approved',
         'schedule_date',
         'schedule_time',
+        'application_pdf'
     ];
 
     public function user(): BelongsTo

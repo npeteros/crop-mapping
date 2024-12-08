@@ -9,6 +9,7 @@ use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\FarmController;
 use App\Http\Controllers\FertilizerController;
 use App\Http\Controllers\InsuranceController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PrecreatedUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResourceController;
@@ -39,15 +40,11 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-// Route::get('/test', function () {
-//     return view('emails.approved_resource_request', [
-//         'resource' => [
-//             'farmer' => 'John Dane Doe',
-//             'name' => 'Tractor',
-//             'delivery_date' => '2024-12-08',
-//         ]
-//     ]);
+// Route::get('/pdf/generate', function () {
+//     return Inertia::render('Pdf');
 // });
+
+// Route::post('/pdf/generate', [PdfController::class, 'generate'])->name('pdf.generate');
 
 Route::get('/profiles', function () {
     return Inertia::render('Profiles', [

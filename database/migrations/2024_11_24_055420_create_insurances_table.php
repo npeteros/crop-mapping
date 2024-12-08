@@ -41,6 +41,7 @@ return new class extends Migration
             $table->boolean('approved')->nullable();
             $table->date('schedule_date')->nullable();
             $table->string('schedule_time')->nullable();
+            $table->string('application_pdf');
             $table->timestamps();
         });
     }
