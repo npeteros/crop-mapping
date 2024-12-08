@@ -162,6 +162,7 @@ export default function Profiles({ crops, cropTypes }) {
                                 title={"Add New Crop"}
                                 onSubmit={submit}
                                 processing={processing}
+                                submitText="Select Farm"
                             >
                                 <div className="flex flex-col gap-1">
                                     <label htmlFor="name">Crop Type: </label>

@@ -29,9 +29,38 @@ export default function Map({ barangays, farms }) {
         farmer: {},
         polygon: [],
         coords: [],
+        farm: {},
     });
 
-    console.log(farms);
+    function getDistinctCropTypes(farm) {
+        const cropTypesArray = Array.from(
+            new Set(
+                farm.crops.map((crop) => ({
+                    id: crop.crop_type.id,
+                    name: crop.crop_type.name,
+                    color: crop.crop_type.color,
+                }))
+            )
+        );
+
+        return (
+            <div className="flex gap-1">
+                {cropTypesArray.map((cropType) => (
+                    <div
+                        key={cropType.id}
+                        className={`rounded-full shadow-md text-center w-fit px-4 bg-neutral-400`}
+                        style={{
+                            backgroundColor: cropType.color,
+                        }}
+                    >
+                        <span className="text-black font-semibold text-xs">
+                            {cropType.name}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        );
+    }
 
     function getCropTypeNamesForUser(user) {
         if (!user || !user.crops) {
@@ -81,8 +110,6 @@ export default function Map({ barangays, farms }) {
                 )
             )
         );
-
-        console.log(cropTypesArray);
 
         return (
             <div className="flex gap-1">
@@ -161,6 +188,7 @@ export default function Map({ barangays, farms }) {
                                 zone.latitude,
                                 zone.longitude,
                             ]),
+                            farm: farm,
                         });
                     }
                 });
@@ -263,7 +291,8 @@ export default function Map({ barangays, farms }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(clickedFarm.farmer.id == user.id || user.role == "bmao") && (
+                                    {(clickedFarm.farmer.id == user.id ||
+                                        user.role == "bmao") && (
                                         <>
                                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                                 <th
@@ -333,8 +362,8 @@ export default function Map({ barangays, farms }) {
                                             Crops
                                         </th>
                                         <td className="px-6 py-4">
-                                            {getCropTypeNamesForUser(
-                                                clickedFarm.farmer
+                                            {getDistinctCropTypes(
+                                                clickedFarm.farm
                                             )}
                                         </td>
                                     </tr>

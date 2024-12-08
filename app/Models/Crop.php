@@ -14,6 +14,7 @@ class Crop extends Model
     protected $fillable = [
         'name',
         'user_id',
+        'farm_id',
         'crop_type_id',
         'planting_date',
         'harvest_date',
@@ -29,5 +30,10 @@ class Crop extends Model
     public function cropType(): BelongsTo
     {
         return $this->belongsTo(CropType::class);
+    }
+
+    public function farm(): BelongsTo
+    {
+        return $this->belongsTo(Farm::class);
     }
 }

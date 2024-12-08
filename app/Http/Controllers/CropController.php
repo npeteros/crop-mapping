@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ApprovedPendingCrop;
 use App\Models\Crop;
 use App\Models\CropType;
+use App\Models\Farm;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,19 +42,36 @@ class CropController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->farm_id) {
+            $validated = $request->validate([
+                'farm_id' => 'required|exists:farms,id',
+                'user_id' => 'required|exists:users,id',
+                'crop_type_id' => 'required|exists:crop_types,id',
+                'planting_date' => 'required|date',
+                'harvest_date' => 'required|date|after:planting_date',
+                'land_area' => 'required|integer',
+            ]);
 
-        Log::info($request->all());
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'crop_type_id' => 'required|exists:crop_types,id',
-            'planting_date' => 'required|date',
-            'harvest_date' => 'required|date|after:planting_date',
-            'land_area' => 'required|integer',
-        ]);
+            $request->user()->crops()->create($validated);
 
-        $request->user()->crops()->create($validated);
+            return redirect()->route('crops.index');
+        } else {
+            $validated = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'crop_type_id' => 'required|exists:crop_types,id',
+                'planting_date' => 'required|date',
+                'harvest_date' => 'required|date|after:planting_date',
+                'land_area' => 'required|integer',
+            ]);
 
-        return redirect(route('crops.index'));
+            // $request->user()->crops()->create($validated);
+            $user = User::find($validated['user_id']);
+
+            return Inertia::render('Crops/SetFarm', [
+                'farms' => Farm::where('rsba', $user->rsba)->with('zones')->get(),
+                'storeData' => $validated
+            ]);
+        }
     }
 
     /**

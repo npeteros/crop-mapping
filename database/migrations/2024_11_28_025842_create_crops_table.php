@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('crops', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('farm_id')->constrained()->cascadeOnDelete();
             $table->foreignId('crop_type_id')->constrained()->cascadeOnDelete();
             $table->date('planting_date');
             $table->date('harvest_date');

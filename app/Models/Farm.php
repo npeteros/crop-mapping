@@ -32,6 +32,11 @@ class Farm extends Model
     {
         return $this->belongsTo(PrecreatedUser::class, 'rsba', 'rsba');
     }
+
+    public function crops(): HasMany
+    {
+        return $this->hasMany(Crop::class);
+    }
     
     protected function getOwner()
     {

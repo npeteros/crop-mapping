@@ -67,6 +67,8 @@ Route::get('/maps', function () {
         'farms' => Farm::with([
             'zones',
             'user',
+            'crops',
+            'crops.cropType',
             'precreatedUser',
             'user.barangay',
             'precreatedUser.barangay',
