@@ -39,13 +39,23 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// Route::get('/test', function () {
+//     return view('emails.approved_resource_request', [
+//         'resource' => [
+//             'farmer' => 'John Dane Doe',
+//             'name' => 'Tractor',
+//             'delivery_date' => '2024-12-08',
+//         ]
+//     ]);
+// });
+
 Route::get('/profiles', function () {
     return Inertia::render('Profiles', [
         'farmers' => User::with('barangay')->where('role', 'Farmer')->has('barangay')->get(),
     ]);
 })->middleware(['auth', 'verified'])->name('profiles');
 
-Route::get('/maps', function () {   
+Route::get('/maps', function () {
     return Inertia::render('Maps', [
         'barangays' => Barangay::with([
             'users.crops.cropType',
@@ -82,7 +92,7 @@ Route::resource('crop-types', CropTypeController::class)
     ->middleware(['auth', 'verified']);
 
 Route::get('/pending-crops', function (): Response {
-    return Inertia::render('PendingCrops', [
+    return Inertia::render('Crops/PendingCrops', [
         'crops' => Crop::with(['cropType', 'user'])->where('approved', 0)->get(),
     ]);
 })->middleware(['auth', 'verified', AdminAccess::class])->name('pending-crops');

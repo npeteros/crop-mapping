@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApprovedPendingCrop;
 use App\Models\Crop;
 use App\Models\CropType;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Log;
+use Mail;
 
 class CropController extends Controller
 {
@@ -78,6 +81,11 @@ class CropController extends Controller
             $crop->update([
                 'approved' => 1,
             ]);
+
+            $user = User::find($crop->user_id);
+            $cropType = CropType::find($crop->crop_type_id);
+
+            Mail::to($user->contact_email)->send(new ApprovedPendingCrop($user, $crop, $cropType));
 
             return redirect(route('pending-crops'));
         } else {

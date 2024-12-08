@@ -61,7 +61,7 @@
             <p>If you have any questions or need to reschedule, feel free to contact us at admin@bmao.com.</p>
             <p>Thank you and we look forward to seeing you.</p>
             <p>Best regards,</p>
-            <p><strong>The Crop Insurance Team</strong></p>
+            <p><strong>Balamban Municipal Agriculture Office</strong></p>
         </div>
         <div class="footer">
             <p>This is an automated message. Please do not reply to this email.</p>

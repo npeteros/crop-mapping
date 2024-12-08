@@ -1,6 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import ApproveRequest from "./ApproveRequest";
 
 export default function Resources({ requests }) {
     console.log(
@@ -308,16 +309,9 @@ export default function Resources({ requests }) {
                                                       {request.name}
                                                   </td>
                                                   <td className="px-6 py-4">
-                                                      <Link
-                                                          href={route(
-                                                              "resource-requests.update",
-                                                              request.id
-                                                          )}
-                                                          method="patch"
-                                                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                                      >
-                                                          Approve
-                                                      </Link>{" "}
+                                                      <ApproveRequest
+                                                          request={request}
+                                                      />{" "}
                                                       /{" "}
                                                       <Link
                                                           href={route(

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApprovedResourceRequest;
 use App\Models\Equipment;
 use App\Models\Fertilizer;
 use App\Models\ResourceRequest;
 use App\Models\Seed;
 use Illuminate\Http\Request;
 use Log;
+use Mail;
 
 class ResourceRequestController extends Controller
 {
@@ -107,10 +109,35 @@ class ResourceRequestController extends Controller
      */
     public function update(Request $request, ResourceRequest $resourceRequest)
     {
-        $resourceRequest->update([
-            'status' => 'approved',
-            'date_approved' => now()
+        $validated = $request->validate([
+            'deliveryDate' => 'required|date|after:today',
         ]);
+        // $resourceRequest->update([
+        //     'status' => 'approved',
+        //     'date_approved' => now()
+        // ]);
+        $resource = ResourceRequest::with(['fertilizer', 'equipment', 'seed', 'user'])
+            ->where('id', $resourceRequest->id)
+            ->get()
+            ->map(function ($request) {
+                $requestName = null;
+
+                if ($request->category === 'fertilizer' && $request->fertilizer) {
+                    $requestName = $request->fertilizer->name;
+                } elseif ($request->category === 'equipment' && $request->equipment) {
+                    $requestName = $request->equipment->name;
+                } elseif ($request->category === 'seed' && $request->seed) {
+                    $requestName = $request->seed->name;
+                }
+
+                return [
+                    'farmer' =>$request->user->first_name . ' ' . $request->user->middle_name . ' ' . $request->user->last_name,
+                    'name' => $requestName,
+                ];
+            })->first();
+        $resource['delivery_date'] = $request->deliveryDate;
+
+        Mail::to($resourceRequest->user->contact_email)->send(new ApprovedResourceRequest($resource));
 
         return redirect(route(name: 'manage-requests'));
     }
