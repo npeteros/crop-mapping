@@ -151,6 +151,14 @@ export default function FarmerNavbar({ user }) {
                                     >
                                         <li>
                                             <Link
+                                                href={route("profile.edit")}
+                                                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                            >
+                                                Profile
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
                                                 method="post"
                                                 href={route("logout")}
                                                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"

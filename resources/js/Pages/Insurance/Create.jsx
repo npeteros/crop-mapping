@@ -20,6 +20,7 @@ export default function Create() {
         spouse: "",
 
         cropType: "",
+        specifiedHigh: "",
         plantingSeason: "",
         plantingDate: "",
         harvestDate: "",
@@ -45,7 +46,7 @@ export default function Create() {
 
         post(route("insurance.store"), {
             onSuccess: () => {
-                reset();
+                // reset();
             },
         });
     };
@@ -442,8 +443,29 @@ export default function Create() {
                                             </option>
                                             <option value="rice">Rice</option>
                                             <option value="corn">Corn</option>
+                                            <option value="high">
+                                                High Valued Crop
+                                            </option>
                                         </select>
                                     </div>
+                                    {data.cropType == "high" && (
+                                        <div className="flex flex-col gap-2">
+                                            <label htmlFor="civilStatus">
+                                                Crop Name
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={data.specifiedHigh}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "specifiedHigh",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                required
+                                            />
+                                        </div>
+                                    )}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="civilStatus">
                                             Planting Season
@@ -540,7 +562,7 @@ export default function Create() {
                                             </option>
                                         </select>
                                     </div>
-                                    <div />
+                                    {data.cropType !== "high" && <div />}
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="civilStatus">
                                             Desired Sum Insured
