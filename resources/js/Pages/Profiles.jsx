@@ -62,7 +62,7 @@ export default function Profiles({ farmers }) {
                 .filter(
                     (farmer) =>
                         farmer.id == search ||
-                        farmer.name
+                        farmer.to
                             .toLowerCase()
                             .includes(search.toLowerCase()) ||
                         farmer.birthdate

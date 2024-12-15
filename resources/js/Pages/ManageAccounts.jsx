@@ -3,6 +3,7 @@ import InputError from "@/Components/InputError";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import DeleteAccount from "./DeleteAccount";
 
 export default function Profiles({ precreated, users, barangays }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -185,9 +186,7 @@ export default function Profiles({ precreated, users, barangays }) {
         }
 
         const cropTypesArray = Array.from(
-            new Set(
-                user.crops.map((crop) => crop.crop_type)
-            )
+            new Set(user.crops.map((crop) => crop.crop_type))
         );
 
         return (
@@ -542,16 +541,9 @@ export default function Profiles({ precreated, users, barangays }) {
                                                           Edit
                                                       </Link>{" "}
                                                       /{" "}
-                                                      <Link
-                                                          href={route(
-                                                              "precreated-users.destroy",
-                                                              farmer.id
-                                                          )}
-                                                          method="delete"
-                                                          className="font-medium text-red-600 dark:text-red-500 hover:underline"
-                                                      >
-                                                          Delete
-                                                      </Link>
+                                                      <DeleteAccount
+                                                          userId={farmer.id}
+                                                      />
                                                   </td>
                                               </tr>
                                           ))
@@ -583,26 +575,7 @@ export default function Profiles({ precreated, users, barangays }) {
                                                   <td className="px-6 py-4">
                                                       {farmer.email}
                                                   </td>
-                                                  <td className="px-6 py-4">
-                                                      {farmer.farms &&
-                                                      farmer.farms.length ? (
-                                                          <Link
-                                                              href={route(
-                                                                  "farms.show",
-                                                                  {
-                                                                      farm: farmer
-                                                                          .farms[0]
-                                                                          ?.id,
-                                                                  }
-                                                              )}
-                                                              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                                          >
-                                                              View
-                                                          </Link>
-                                                      ) : (
-                                                          ""
-                                                      )}
-                                                  </td>
+
                                                   <td className="py-4 grid grid-cols-4 gap-2 w-fit">
                                                       {getCropTypeNamesForUser(
                                                           farmer
@@ -613,9 +586,9 @@ export default function Profiles({ precreated, users, barangays }) {
                                                           Edit
                                                       </Link>{" "}
                                                       /{" "}
-                                                      <Link className="font-medium text-red-600 dark:text-red-500 hover:underline">
-                                                          Delete
-                                                      </Link>
+                                                      <DeleteAccount
+                                                          userId={farmer.id}
+                                                      />
                                                   </td>
                                               </tr>
                                           ))}
