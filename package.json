@@ -23,6 +23,7 @@
     "dependencies": {
         "@turf/area": "^7.1.0",
         "@turf/helpers": "^7.1.0",
+        "@turf/turf": "^7.1.0",
         "leaflet": "^1.9.4",
         "react-leaflet": "^4.2.1"
     }

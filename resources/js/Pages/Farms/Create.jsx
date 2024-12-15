@@ -14,9 +14,9 @@ import { Head, useForm } from "@inertiajs/react";
 import geoData from "@/Pages/geoData.json";
 import { useEffect, useState } from "react";
 import InputError from "@/Components/InputError";
+import * as turf from "@turf/turf";
 
 export default function Create({ user }) {
-    console.log(user);
     const [center, setCenter] = useState({
         areaName: "",
         coords: [],
@@ -29,6 +29,15 @@ export default function Create({ user }) {
         rsba: user.rsba,
     });
     const [drawnZones, setDrawnZones] = useState([]);
+
+    const calculateArea = (coords) => {
+        const lngLatCoords = coords.map(([lat, lng]) => [lng, lat]);
+        lngLatCoords.push(lngLatCoords[0])
+        const polygon = turf.polygon([[...lngLatCoords]]);
+        const areaInSquareMeters = turf.area(polygon);
+        const areaInHectares = areaInSquareMeters / 10000;
+        return areaInHectares.toFixed(2);
+    };
 
     function calculateCenter(coords) {
         let totalLat = 0;
@@ -184,6 +193,19 @@ export default function Create({ user }) {
                                         }
                                         value={data.sitio}
                                     />
+                                </div>
+                                <InputError
+                                    message={errors.sitio}
+                                    className="mt-2"
+                                />
+                                <div className="flex items-center gap-2">
+                                    <label
+                                        htmlFor="area"
+                                        className="font-medium"
+                                    >
+                                        Total Hectares:{" "}
+                                    </label>
+                                    <span className="font-semibold">{data.coords.length > 0 ? calculateArea(data.coords) : "0"} hectares</span>
                                 </div>
                                 <InputError
                                     message={errors.sitio}

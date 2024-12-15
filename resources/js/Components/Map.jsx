@@ -11,6 +11,7 @@ import {
 import geoData from "@/Pages/geoData.json";
 import { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
+import * as turf from "@turf/turf";
 
 export default function Map({ barangays, farms }) {
     const user = usePage().props.auth.user;
@@ -148,8 +149,12 @@ export default function Map({ barangays, farms }) {
     }
 
     const calculateArea = (coords) => {
-        // const poly = polygon([setCoords.map(([lng, lat]) => [lng, lat])])
-        // return area(poly);
+        const lngLatCoords = coords.map(([lat, lng]) => [lng, lat]);
+        lngLatCoords.push(lngLatCoords[0]);
+        const polygon = turf.polygon([[...lngLatCoords]]);
+        const areaInSquareMeters = turf.area(polygon);
+        const areaInHectares = areaInSquareMeters / 10000;
+        return areaInHectares.toFixed(2);
     };
 
     function MoveMapToCenter({ center }) {
@@ -365,6 +370,17 @@ export default function Map({ barangays, farms }) {
                                             {getDistinctCropTypes(
                                                 clickedFarm.farm
                                             )}
+                                        </td>
+                                    </tr>
+                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                        <th
+                                            scope="row"
+                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                        >
+                                            Total Hectares
+                                        </th>
+                                        <td className="px-6 py-4">
+                                            {calculateArea(clickedFarm.polygon)} hectares
                                         </td>
                                     </tr>
                                     {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">

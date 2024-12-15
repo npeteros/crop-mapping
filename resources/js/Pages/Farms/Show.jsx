@@ -13,9 +13,9 @@ import "leaflet/dist/leaflet.css";
 import { Head, useForm } from "@inertiajs/react";
 import geoData from "@/Pages/geoData.json";
 import { useEffect, useState } from "react";
+import * as turf from "@turf/turf";
 
 export default function Farms({ farm }) {
-    console.log(farm)
     const [center, setCenter] = useState({
         areaName: "",
         coords: [],
@@ -28,6 +28,15 @@ export default function Farms({ farm }) {
         userId: user.id,
     });
     const [drawnZones, setDrawnZones] = useState([]);
+
+    const calculateArea = (coords) => {
+        const lngLatCoords = coords.map(([lat, lng]) => [lng, lat]);
+        lngLatCoords.push(lngLatCoords[0])
+        const polygon = turf.polygon([[...lngLatCoords]]);
+        const areaInSquareMeters = turf.area(polygon);
+        const areaInHectares = areaInSquareMeters / 10000;
+        return areaInHectares.toFixed(2);
+    };
 
     function calculateCenter(coords) {
         let totalLat = 0;
@@ -198,15 +207,15 @@ export default function Farms({ farm }) {
                                             {user.address}
                                         </td>
                                     </tr>
-                                    {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                             <th
                                                 scope="row"
                                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                             >
                                                 Total Hectares
                                             </th>
-                                            <td className="px-6 py-4">{calculateArea(clickedFarm.polygon)}</td>
-                                        </tr> */}
+                                            <td className="px-6 py-4">{calculateArea(farm.zones.map(zone => [zone.latitude, zone.longitude]))} hectares</td>
+                                        </tr>
                                 </tbody>
                             </table>
                         </div>
