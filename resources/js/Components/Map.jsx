@@ -232,6 +232,7 @@ export default function Map({ barangays, farms }) {
             setCenter({ areaName: name, coords: calculatedCenter });
         }
     }
+
     return (
         <div className="w-screen h-screen relative">
             <MapContainer
@@ -296,7 +297,7 @@ export default function Map({ barangays, farms }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(clickedFarm.farmer.id == user.id ||
+                                    {(clickedFarm.farmer.rsba == user.rsba ||
                                         user.role == "bmao") && (
                                         <>
                                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -357,6 +358,20 @@ export default function Map({ barangays, farms }) {
                                                     {clickedFarm.farmer.address}
                                                 </td>
                                             </tr>
+                                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                <th
+                                                    scope="row"
+                                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                >
+                                                    Total Hectares
+                                                </th>
+                                                <td className="px-6 py-4">
+                                                    {calculateArea(
+                                                        clickedFarm.polygon
+                                                    )}{" "}
+                                                    hectares
+                                                </td>
+                                            </tr>
                                         </>
                                     )}
                                     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -372,26 +387,6 @@ export default function Map({ barangays, farms }) {
                                             )}
                                         </td>
                                     </tr>
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                        >
-                                            Total Hectares
-                                        </th>
-                                        <td className="px-6 py-4">
-                                            {calculateArea(clickedFarm.polygon)} hectares
-                                        </td>
-                                    </tr>
-                                    {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                            <th
-                                                scope="row"
-                                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                            >
-                                                Total Hectares
-                                            </th>
-                                            <td className="px-6 py-4">{calculateArea(clickedFarm.polygon)}</td>
-                                        </tr> */}
                                 </tbody>
                             </table>
                         </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Farm;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -58,6 +59,8 @@ class ProfileController extends Controller
 
             Auth::logout();
 
+            Farm::where('rsba', $user->rsba)->delete();
+
             $user->delete();
 
             $request->session()->invalidate();
@@ -70,6 +73,8 @@ class ProfileController extends Controller
             ]);
 
             $user = User::find($validated['userId']);
+
+            Farm::where('rsba', $user->rsba)->delete();
 
             $user->delete();
 
