@@ -1,7 +1,5 @@
 # 🌾 Crop Mapping Web Application for Balamban, Cebu
 
-![Project Banner](https://via.placeholder.com/1200x400.png?text=Crop+Mapping+Web+App)
-
 A **Laravel + Inertia + React** web application designed to bridge the gap between **Balamban farmers** and the **local government** by streamlining agricultural services. The platform enables farmers to **request crop insurance, equipment, seeds, fertilizers**, and facilitates **farm/land monitoring** through **GIS mapping**.
 
 ## 🚀 Features
@@ -31,18 +29,23 @@ A **Laravel + Inertia + React** web application designed to bridge the gap betwe
 ### Setup
 
 1. **Clone the repository**
+
     ```sh
     git clone https://github.com/npeteros/crop-mapping.git
     cd crop-mapping
 
     ```
+
 2. **Install dependencies**
+
     ```sh
     composer install
     npm install && npm run dev
 
     ```
+
 3. **Set up environment variables**
+
     ```sh
     cp .env.example .env
     php artisan key:generate
